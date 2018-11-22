@@ -5,12 +5,17 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PathMeasure;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CircleMenu extends ViewGroup {
     private static final String TAG = "CircleMenu";
@@ -25,6 +30,8 @@ public class CircleMenu extends ViewGroup {
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private View mActionView = null;
 
+    private List<View> mItems = new ArrayList<>();
+
     public CircleMenu(Context context) {
         this(context, null);
     }
@@ -38,6 +45,23 @@ public class CircleMenu extends ViewGroup {
         this.setWillNotDraw(false);
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
+
+        ImageView item1 = new ImageView(context);
+        ImageView item2 = new ImageView(context);
+        ImageView item3 = new ImageView(context);
+
+        item1.setImageResource(R.mipmap.ic_launcher);
+        item2.setImageResource(R.mipmap.ic_launcher);
+        item3.setImageResource(R.mipmap.ic_launcher);
+
+        mItems.add(item1);
+        mItems.add(item2);
+        mItems.add(item3);
+
+        for (View item : mItems) {
+            addView(item);
+        }
+
         ImageView actionView = new ImageView(context);
         actionView.setImageResource(R.mipmap.ic_launcher_round);
         mActionView = actionView;
@@ -49,7 +73,42 @@ public class CircleMenu extends ViewGroup {
         Log.i(TAG, "onLayout: changed = " + changed + ", left = " + l + ", top = " + t + ", right = " + r + ", bottom = " + b);
         int centerX = (r - l) / 2;
         int centerY = (b - t) / 2;
-        mActionView.layout(centerX - 50, centerY - 50,centerX + 50, centerY + 50 );
+        mActionView.layout(centerX - 50, centerY - 50, centerX + 50, centerY + 50);
+
+        if (mRadius > 0) {
+            RectF rectF = new RectF(
+                    centerX - mRadius + 50,
+                    centerY - mRadius + 50,
+                    centerX + mRadius - 50,
+                    centerY + mRadius - 50);
+            Path path = new Path();
+            path.addArc(rectF, 0, 360);
+            PathMeasure measure = new PathMeasure(path, false);
+
+            float distance = measure.getLength() / Math.max(mItems.size(), 1);
+            float[] pos = new float[2];
+            for (int i = 0; i < mItems.size(); i++) {
+                measure.getPosTan(i * distance, pos, null);
+
+                int left = (int) (pos[0] - 40);
+                int top = (int) (pos[1] - 40);
+                int right = (int) (pos[0] + 40);
+                int bottom = (int) (pos[1] + 40);
+                mItems.get(i).layout(left, top, right, bottom);
+
+                Log.i(TAG, "onLayout: left = " + left + ", top = " + top + ", right = " + right + ", bottom = " + bottom);
+            }
+        } else {
+            for (int i = 0; i < mItems.size(); i++) {
+                int left = centerX - 40;
+                int top = centerY - 40;
+                int right = centerX + 40;
+                int bottom = centerY + 40;
+                mItems.get(i).layout(left, top, right, bottom);
+
+                Log.i(TAG, "onLayout: left = " + left + ", top = " + top + ", right = " + right + ", bottom = " + bottom);
+            }
+        }
     }
 
     @Override
@@ -83,7 +142,7 @@ public class CircleMenu extends ViewGroup {
 
     public void setRadius(float radius) {
         mRadius = radius;
-        invalidate();
+        requestLayout();
     }
 
     public boolean isOpen() {
