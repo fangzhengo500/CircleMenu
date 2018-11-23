@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,9 @@ public class CircleMenu extends ViewGroup {
 
     private float mRadiusMax = 500;
     private float mRadiusMin = 0;
+
+    private float mStartAngle = 180;
+    private float mSweepAngle = 90;
 
     private float mRadius = mRadiusMin;
 
@@ -46,13 +50,15 @@ public class CircleMenu extends ViewGroup {
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
 
-        ImageView item1 = new ImageView(context);
-        ImageView item2 = new ImageView(context);
-        ImageView item3 = new ImageView(context);
-
-        item1.setImageResource(R.mipmap.ic_launcher);
-        item2.setImageResource(R.mipmap.ic_launcher);
-        item3.setImageResource(R.mipmap.ic_launcher);
+        TextView item1 = new TextView(context);
+        TextView item2 = new TextView(context);
+        TextView item3 = new TextView(context);
+        item1.setText("1");
+        item2.setText("2");
+        item3.setText("3");
+        item1.setBackgroundResource(R.mipmap.ic_launcher);
+        item2.setBackgroundResource(R.mipmap.ic_launcher);
+        item3.setBackgroundResource(R.mipmap.ic_launcher);
 
         mItems.add(item1);
         mItems.add(item2);
@@ -70,7 +76,7 @@ public class CircleMenu extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.i(TAG, "onLayout: changed = " + changed + ", left = " + l + ", top = " + t + ", right = " + r + ", bottom = " + b);
+        //Log.i(TAG, "onLayout: changed = " + changed + ", left = " + l + ", top = " + t + ", right = " + r + ", bottom = " + b);
         int centerX = (r - l) / 2;
         int centerY = (b - t) / 2;
         mActionView.layout(centerX - 50, centerY - 50, centerX + 50, centerY + 50);
@@ -82,7 +88,7 @@ public class CircleMenu extends ViewGroup {
                     centerX + mRadius - 50,
                     centerY + mRadius - 50);
             Path path = new Path();
-            path.addArc(rectF, 0, 360);
+            path.addArc(rectF, mStartAngle, mSweepAngle);
             PathMeasure measure = new PathMeasure(path, false);
 
             float distance = measure.getLength() / Math.max(mItems.size(), 1);
@@ -96,7 +102,7 @@ public class CircleMenu extends ViewGroup {
                 int bottom = (int) (pos[1] + 40);
                 mItems.get(i).layout(left, top, right, bottom);
 
-                Log.i(TAG, "onLayout: left = " + left + ", top = " + top + ", right = " + right + ", bottom = " + bottom);
+                //Log.i(TAG, "onLayout: left = " + left + ", top = " + top + ", right = " + right + ", bottom = " + bottom);
             }
         } else {
             for (int i = 0; i < mItems.size(); i++) {
@@ -106,7 +112,7 @@ public class CircleMenu extends ViewGroup {
                 int bottom = centerY + 40;
                 mItems.get(i).layout(left, top, right, bottom);
 
-                Log.i(TAG, "onLayout: left = " + left + ", top = " + top + ", right = " + right + ", bottom = " + bottom);
+                //Log.i(TAG, "onLayout: left = " + left + ", top = " + top + ", right = " + right + ", bottom = " + bottom);
             }
         }
     }
@@ -125,12 +131,14 @@ public class CircleMenu extends ViewGroup {
     }
 
     public void open(boolean animated) {
+        Log.i(TAG, "open: " + mRadiusMin + " -> " + mRadiusMax);
         isOpen = true;
         ObjectAnimator animator = ObjectAnimator.ofFloat(this, "radius", mRadiusMin, mRadiusMax);
         animator.start();
     }
 
     public void close(boolean animated) {
+        Log.i(TAG, "open: " + mRadiusMax + " -> " + mRadiusMin);
         isOpen = false;
         ObjectAnimator animator = ObjectAnimator.ofFloat(this, "radius", mRadiusMax, mRadiusMin);
         animator.start();
@@ -142,6 +150,40 @@ public class CircleMenu extends ViewGroup {
 
     public void setRadius(float radius) {
         mRadius = radius;
+        requestLayout();
+    }
+
+    public float getRadiusMax() {
+        return mRadiusMax;
+    }
+
+    public void setRadiusMax(float radiusMax) {
+        mRadiusMax = radiusMax;
+    }
+
+    public float getRadiusMin() {
+        return mRadiusMin;
+    }
+
+    public void setRadiusMin(float radiusMin) {
+        mRadiusMin = radiusMin;
+    }
+
+    public float getStartAngle() {
+        return mStartAngle;
+    }
+
+    public void setStartAngle(float startAngle) {
+        mStartAngle = startAngle;
+        requestLayout();
+    }
+
+    public float getSweepAngle() {
+        return mSweepAngle;
+    }
+
+    public void setSweepAngle(float sweepAngle) {
+        mSweepAngle = sweepAngle;
         requestLayout();
     }
 

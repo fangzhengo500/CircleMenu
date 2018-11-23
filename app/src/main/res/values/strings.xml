@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">CircleMenu</string>
+    <string name="min_radius">Min Radius</string>
+    <string name="max_radius">Max Radius</string>
+    <string name="radius">Radius</string>
+    <string name="angle">Angle</string>
+    <string name="start_angle">Start Angle</string>
+    <string name="sweep_angle">Sweep Angle</string>
 </resources>
