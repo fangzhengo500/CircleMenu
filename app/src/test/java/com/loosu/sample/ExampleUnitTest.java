@@ -1,4 +1,4 @@
-package com.loosu.circlemenu;
+package com.loosu.sample;
 
 import org.junit.Test;
 

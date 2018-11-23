@@ -1,9 +1,11 @@
-package com.loosu.circlemenu;
+package com.loosu.sample;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SeekBar;
+
+import com.loosu.floatingmenu.CircleMenu;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
