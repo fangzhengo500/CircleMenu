@@ -18,7 +18,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CircleMenu extends ViewGroup {
+public class CircleMenu extends ViewGroup implements IMenu {
     private static final String TAG = "CircleMenu";
 
     private float mRadiusMax = 500;
@@ -135,6 +135,7 @@ public class CircleMenu extends ViewGroup {
         canvas.drawArc(panelRect, 0, 360, true, mPaint);
     }
 
+    @Override
     public void open(boolean animated) {
         Log.i(TAG, "open: " + mRadiusMin + " -> " + mRadiusMax);
         isOpen = true;
@@ -142,6 +143,7 @@ public class CircleMenu extends ViewGroup {
         animator.start();
     }
 
+    @Override
     public void close(boolean animated) {
         Log.i(TAG, "open: " + mRadiusMax + " -> " + mRadiusMin);
         isOpen = false;
