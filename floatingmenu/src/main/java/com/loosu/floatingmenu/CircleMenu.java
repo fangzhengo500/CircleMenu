@@ -1,5 +1,7 @@
 package com.loosu.floatingmenu;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.Context;
@@ -46,10 +48,14 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
     private boolean isOpen = false;
 
+    private OnStateChangeListener mStateChangeListener = null;
+
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private View mActionView = null;
 
     private List<View> mItems = new ArrayList<>();
+    private ObjectAnimator mAnimator;
+
 
     public CircleMenu(Context context) {
         this(context, null);
@@ -152,20 +158,62 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
     @Override
     public void open(boolean animated) {
-        Log.i(TAG, "open: " + mRadiusMin + " -> " + mRadiusMax);
+        if (mAnimator!=null){
+            mAnimator.cancel();
+        }
         isOpen = true;
+
+        if (mStateChangeListener != null) {
+            mStateChangeListener.onMenuStateChange(this, State.START_OPEN);
+        }
         PropertyValuesHolder holder = PropertyValuesHolder.ofFloat(CircleMenu.RADIUS, getRadius(), mRadiusMax);
-        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(this, holder);
-        animator.start();
+        mAnimator = ObjectAnimator.ofPropertyValuesHolder(this, holder);
+        mAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (mStateChangeListener != null) {
+                    mStateChangeListener.onMenuStateChange(CircleMenu.this, State.SETTING);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (mStateChangeListener != null) {
+                    mStateChangeListener.onMenuStateChange(CircleMenu.this, State.OPENED);
+                }
+            }
+        });
+        mAnimator.start();
     }
 
     @Override
     public void close(boolean animated) {
-        Log.i(TAG, "open: " + mRadiusMax + " -> " + mRadiusMin);
+        if (mAnimator!=null){
+            mAnimator.cancel();
+        }
         isOpen = false;
+
+        if (mStateChangeListener != null) {
+            mStateChangeListener.onMenuStateChange(this, State.START_CLOSE);
+        }
         PropertyValuesHolder holder = PropertyValuesHolder.ofFloat(CircleMenu.RADIUS, getRadius(), mRadiusMin);
-        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(this, holder);
-        animator.start();
+        mAnimator = ObjectAnimator.ofPropertyValuesHolder(this, holder);
+        mAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (mStateChangeListener != null) {
+                    mStateChangeListener.onMenuStateChange(CircleMenu.this, State.SETTING);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (mStateChangeListener != null) {
+                    mStateChangeListener.onMenuStateChange(CircleMenu.this, State.CLOSED);
+                }
+            }
+        });
+        mAnimator.start();
     }
 
     public float getRadius() {
@@ -211,7 +259,16 @@ public class CircleMenu extends ViewGroup implements IMenu {
         requestLayout();
     }
 
+    public OnStateChangeListener getStateChangeListener() {
+        return mStateChangeListener;
+    }
+
+    public void setStateChangeListener(OnStateChangeListener stateChangeListener) {
+        mStateChangeListener = stateChangeListener;
+    }
+
     public boolean isOpen() {
         return isOpen;
     }
+
 }

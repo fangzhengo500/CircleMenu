@@ -4,8 +4,7 @@ public interface IMenu {
     public enum State {
         START_OPEN,
         START_CLOSE,
-        CLOSING,
-        OPENING,
+        SETTING,
         CLOSED,
         OPENED,
     }
@@ -15,6 +14,6 @@ public interface IMenu {
     public void close(boolean animated);
 
     public interface OnStateChangeListener {
-        public void onStatteChange(IMenu menu, State state);
+        public void onMenuStateChange(IMenu menu, State state);
     }
 }

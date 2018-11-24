@@ -2,12 +2,15 @@ package com.loosu.sample;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 
 import com.loosu.floatingmenu.CircleMenu;
+import com.loosu.floatingmenu.IMenu;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, IMenu.OnStateChangeListener {
+    private static final String TAG = "MainActivity";
 
     private CircleMenu mMenu;
     private SeekBar mSeekMinRadius;
@@ -22,7 +25,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findView(savedInstanceState);
         initView(savedInstanceState);
         initListener(savedInstanceState);
-
     }
 
 
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initListener(Bundle savedInstanceState) {
         mMenu.setOnClickListener(this);
+        mMenu.setStateChangeListener(this);
         mSeekMinRadius.setOnSeekBarChangeListener(this);
         mSeekMaxRadius.setOnSeekBarChangeListener(this);
 
@@ -87,5 +90,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    @Override
+    public void onMenuStateChange(IMenu menu, IMenu.State state) {
+        Log.i(TAG, "onMenuStateChange: " + state.toString());
     }
 }
