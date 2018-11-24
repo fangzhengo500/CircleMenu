@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 
-import com.loosu.floatingmenu.CircleMenu;
+import com.loosu.floatingmenu.circlemenu.CircleMenu;
 import com.loosu.floatingmenu.IMenu;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, IMenu.OnStateChangeListener {

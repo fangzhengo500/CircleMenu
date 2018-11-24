@@ -1,4 +1,4 @@
-package com.loosu.floatingmenu;
+package com.loosu.floatingmenu.circlemenu;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -19,7 +19,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.loosu.floatingmenu.IMenu;
+import com.loosu.floatingmenu.R;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CircleMenu extends ViewGroup implements IMenu {
@@ -51,9 +55,9 @@ public class CircleMenu extends ViewGroup implements IMenu {
     private OnStateChangeListener mStateChangeListener = null;
 
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private View mActionView = null;
+    private ActionItem mItemAction = null;
 
-    private List<View> mItems = new ArrayList<>();
+    private List<IMenu.IItem> mItems = new ArrayList<>();
     private ObjectAnimator mAnimator;
 
 
@@ -74,6 +78,7 @@ public class CircleMenu extends ViewGroup implements IMenu {
         TextView item1 = new TextView(context);
         TextView item2 = new TextView(context);
         TextView item3 = new TextView(context);
+
         item1.setText("1");
         item2.setText("2");
         item3.setText("3");
@@ -81,18 +86,19 @@ public class CircleMenu extends ViewGroup implements IMenu {
         item2.setBackgroundColor(0xff66ff66);
         item3.setBackgroundColor(0xff6666ff);
 
-        mItems.add(item1);
-        mItems.add(item2);
-        mItems.add(item3);
+        mItems.add(new MenuItem(item1));
+        mItems.add(new MenuItem(item2));
+        mItems.add(new MenuItem(item3));
 
-        for (View item : mItems) {
-            addView(item);
+        for (IItem item : mItems) {
+            addView(item.getView());
         }
 
         ImageView actionView = new ImageView(context);
         actionView.setImageResource(R.drawable.icon_github);
-        mActionView = actionView;
-        addView(actionView);
+
+        mItemAction = new ActionItem(actionView);
+        addView(mItemAction.getView());
     }
 
     @Override
@@ -105,40 +111,12 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        //Log.i(TAG, "onLayout: changed = " + changed + ", left = " + l + ", top = " + t + ", right = " + r + ", bottom = " + b);
         int centerX = (r - l) / 2;
         int centerY = (b - t) / 2;
-        mActionView.layout(centerX - 50, centerY - 50, centerX + 50, centerY + 50);
+        mItemAction.getView().layout(centerX - 50, centerY - 50, centerX + 50, centerY + 50);
 
-        if (mRadius > 0) {
-            RectF rectF = new RectF(
-                    centerX - mRadius + 50,
-                    centerY - mRadius + 50,
-                    centerX + mRadius - 50,
-                    centerY + mRadius - 50);
-            Path path = new Path();
-            path.addArc(rectF, mStartAngle, mSweepAngle);
-            PathMeasure measure = new PathMeasure(path, false);
-
-            float distance = measure.getLength() / Math.max(mItems.size(), 1);
-            float[] pos = new float[2];
-            for (int i = 0; i < mItems.size(); i++) {
-                measure.getPosTan(i * distance, pos, null);
-
-                int left = (int) (pos[0] - 40);
-                int top = (int) (pos[1] - 40);
-                int right = (int) (pos[0] + 40);
-                int bottom = (int) (pos[1] + 40);
-                mItems.get(i).layout(left, top, right, bottom);
-            }
-        } else {
-            for (int i = 0; i < mItems.size(); i++) {
-                int left = centerX - 40;
-                int top = centerY - 40;
-                int right = centerX + 40;
-                int bottom = centerY + 40;
-                mItems.get(i).layout(left, top, right, bottom);
-            }
+        for (IItem item : mItems) {
+            item.getView().layout(centerX - 50, centerY - 50, centerX + 50, centerY + 50);
         }
     }
 
@@ -158,61 +136,38 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
     @Override
     public void open(boolean animated) {
-        if (mAnimator!=null){
+        if (mAnimator != null) {
             mAnimator.cancel();
         }
         isOpen = true;
 
-        if (mStateChangeListener != null) {
-            mStateChangeListener.onMenuStateChange(this, State.START_OPEN);
-        }
+        changeState(State.START_OPEN);
+
+        // menu start open but, action view and items want to do something.
         PropertyValuesHolder holder = PropertyValuesHolder.ofFloat(CircleMenu.RADIUS, getRadius(), mRadiusMax);
         mAnimator = ObjectAnimator.ofPropertyValuesHolder(this, holder);
-        mAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                if (mStateChangeListener != null) {
-                    mStateChangeListener.onMenuStateChange(CircleMenu.this, State.SETTING);
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (mStateChangeListener != null) {
-                    mStateChangeListener.onMenuStateChange(CircleMenu.this, State.OPENED);
-                }
-            }
-        });
+        mAnimator.addListener(mMenuOpenListener);
         mAnimator.start();
+    }
+
+    private void changeState(State state) {
+        if (mStateChangeListener != null) {
+            mStateChangeListener.onMenuStateChange(this, state);
+        }
+        mItemAction.onMenuStateChange(this, state);
     }
 
     @Override
     public void close(boolean animated) {
-        if (mAnimator!=null){
+        if (mAnimator != null) {
             mAnimator.cancel();
         }
         isOpen = false;
 
-        if (mStateChangeListener != null) {
-            mStateChangeListener.onMenuStateChange(this, State.START_CLOSE);
-        }
+        changeState(State.START_CLOSE);
         PropertyValuesHolder holder = PropertyValuesHolder.ofFloat(CircleMenu.RADIUS, getRadius(), mRadiusMin);
         mAnimator = ObjectAnimator.ofPropertyValuesHolder(this, holder);
-        mAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                if (mStateChangeListener != null) {
-                    mStateChangeListener.onMenuStateChange(CircleMenu.this, State.SETTING);
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (mStateChangeListener != null) {
-                    mStateChangeListener.onMenuStateChange(CircleMenu.this, State.CLOSED);
-                }
-            }
-        });
+        mAnimator.addListener(mMenuCloseListener);
         mAnimator.start();
     }
 
@@ -222,7 +177,7 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
     public void setRadius(float radius) {
         mRadius = radius;
-        requestLayout();
+        postInvalidate();
     }
 
     public float getRadiusMax() {
@@ -271,4 +226,85 @@ public class CircleMenu extends ViewGroup implements IMenu {
         return isOpen;
     }
 
+    private final AnimatorListenerAdapter mMenuOpenListener = new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationStart(Animator animation) {
+            changeState(State.SETTING);
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            changeState(State.OPENED);
+
+            float anchorX = mItemAction.getView().getX();
+            float anchorY = mItemAction.getView().getY();
+
+            RectF rectF = new RectF(
+                    anchorX - mRadius + 50,
+                    anchorY - mRadius + 50,
+                    anchorX + mRadius - 50,
+                    anchorY + mRadius - 50);
+
+            Path path = new Path();
+            path.addArc(rectF, mStartAngle, mSweepAngle);
+            PathMeasure measure = new PathMeasure(path, false);
+
+            float distance = measure.getLength() / Math.max(mItems.size(), 1);
+            float[] pos = new float[2];
+            for (int i = 0; i < mItems.size(); i++) {
+                measure.getPosTan(i * distance, pos, null);
+
+                int left = (int) (pos[0] - 40);
+                int top = (int) (pos[1] - 40);
+                int right = (int) (pos[0] + 40);
+                int bottom = (int) (pos[1] + 40);
+                View view = mItems.get(i).getView();
+                view.setX(pos[0]);
+                view.setY(pos[1]);
+
+                Log.w(TAG, "onAnimationEnd: " + Arrays.toString(pos));
+            }
+        }
+    };
+
+    private final AnimatorListenerAdapter mMenuCloseListener = new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationStart(Animator animation) {
+            changeState(State.SETTING);
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            changeState(State.CLOSED);
+
+            float anchorX = mItemAction.getView().getX();
+            float anchorY = mItemAction.getView().getY();
+
+            RectF rectF = new RectF(
+                    anchorX - mRadius + 50,
+                    anchorY - mRadius + 50,
+                    anchorX + mRadius - 50,
+                    anchorY + mRadius - 50);
+
+            Path path = new Path();
+            path.addArc(rectF, mStartAngle, mSweepAngle);
+            PathMeasure measure = new PathMeasure(path, false);
+
+            float distance = measure.getLength() / Math.max(mItems.size(), 1);
+            float[] pos = new float[2];
+            for (int i = 0; i < mItems.size(); i++) {
+                measure.getPosTan(i * distance, pos, null);
+
+                int left = (int) (pos[0] - 40);
+                int top = (int) (pos[1] - 40);
+                int right = (int) (pos[0] + 40);
+                int bottom = (int) (pos[1] + 40);
+                View view = mItems.get(i).getView();
+                view.setX(pos[0]);
+                view.setY(pos[1]);
+
+                Log.w(TAG, "onAnimationEnd: " + Arrays.toString(pos));
+            }
+        }
+    };
 }
