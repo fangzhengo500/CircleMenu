@@ -113,9 +113,9 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                     PropertyValuesHolder[] holders = {
                             PropertyValuesHolder.ofFloat(View.X, itemView.getX(), anchorX),
                             PropertyValuesHolder.ofFloat(View.Y, itemView.getY(), anchorY),
-                            PropertyValuesHolder.ofFloat(View.SCALE_X, itemView.getScaleX(), 1),
-                            PropertyValuesHolder.ofFloat(View.SCALE_Y, itemView.getScaleY(), 1),
-                            PropertyValuesHolder.ofFloat(View.ALPHA, itemView.getAlpha(), 1),
+                            PropertyValuesHolder.ofFloat(View.SCALE_X, itemView.getScaleX(), 0),
+                            PropertyValuesHolder.ofFloat(View.SCALE_Y, itemView.getScaleY(), 0),
+                            PropertyValuesHolder.ofFloat(View.ALPHA, itemView.getAlpha(), 0),
                             PropertyValuesHolder.ofFloat(View.ROTATION, itemView.getRotation(), 0),
                     };
 
