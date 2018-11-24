@@ -1,6 +1,7 @@
 package com.loosu.floatingmenu;
 
 import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import android.graphics.PathMeasure;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Property;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,6 +22,19 @@ import java.util.List;
 
 public class CircleMenu extends ViewGroup implements IMenu {
     private static final String TAG = "CircleMenu";
+
+    public static final Property<CircleMenu, Float> RADIUS = new Property<CircleMenu, Float>(Float.class, "radius") {
+
+        @Override
+        public void set(CircleMenu object, Float value) {
+            object.setRadius(value);
+        }
+
+        @Override
+        public Float get(CircleMenu object) {
+            return object.getRadius();
+        }
+    };
 
     private float mRadiusMax = 500;
     private float mRadiusMin = 0;
@@ -139,7 +154,8 @@ public class CircleMenu extends ViewGroup implements IMenu {
     public void open(boolean animated) {
         Log.i(TAG, "open: " + mRadiusMin + " -> " + mRadiusMax);
         isOpen = true;
-        ObjectAnimator animator = ObjectAnimator.ofFloat(this, "radius", mRadiusMin, mRadiusMax);
+        PropertyValuesHolder holder = PropertyValuesHolder.ofFloat(CircleMenu.RADIUS, getRadius(), mRadiusMax);
+        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(this, holder);
         animator.start();
     }
 
@@ -147,7 +163,8 @@ public class CircleMenu extends ViewGroup implements IMenu {
     public void close(boolean animated) {
         Log.i(TAG, "open: " + mRadiusMax + " -> " + mRadiusMin);
         isOpen = false;
-        ObjectAnimator animator = ObjectAnimator.ofFloat(this, "radius", mRadiusMax, mRadiusMin);
+        PropertyValuesHolder holder = PropertyValuesHolder.ofFloat(CircleMenu.RADIUS, getRadius(), mRadiusMin);
+        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(this, holder);
         animator.start();
     }
 
