@@ -39,20 +39,20 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
         // item 动画
         List<Animator> animatorList = new ArrayList<>();
         if (menu.getActionItem() != null && menu.getActionItem().getView() != null && menu.getItems() != null) {
-            View actionView = menu.getActionItem().getView();
+            BaseItem actionItem = menu.getActionItem();
+            View actionView = actionItem.getView();
 
-            float anchorX = actionView.getX();
-            float anchorY = actionView.getY();
+            float anchorX = actionView.getX() + actionView.getWidth() / 2;
+            float anchorY = actionView.getY() + actionView.getHeight() / 2;
             float radiusMax = menu.getRadiusMax();
 
             List<IMenu.IItem> items = menu.getItems();
             if (items != null && items.size() > 0) {
-
                 RectF rectF = new RectF(
-                        anchorX - radiusMax + 50,
-                        anchorY - radiusMax + 50,
-                        anchorX + radiusMax - 50,
-                        anchorY + radiusMax - 50);
+                        anchorX - radiusMax,
+                        anchorY - radiusMax,
+                        anchorX + radiusMax,
+                        anchorY + radiusMax);
                 Path path = new Path();
                 path.addArc(rectF, menu.getStartAngle(), menu.getSweepAngle());
                 PathMeasure measure = new PathMeasure(path, false);
@@ -63,11 +63,12 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                     // 计算 item 终点坐标
                     measure.getPosTan(distance * i, pos, null);
 
-                    View itemView = items.get(i).getView();
+                    IMenu.IItem item = items.get(i);
+                    View itemView = item.getView();
 
                     PropertyValuesHolder[] holders = {
-                            PropertyValuesHolder.ofFloat(View.X, itemView.getX(), pos[0]),
-                            PropertyValuesHolder.ofFloat(View.Y, itemView.getY(), pos[1]),
+                            PropertyValuesHolder.ofFloat(View.X, itemView.getX(), pos[0] - item.getWidht() / 2),
+                            PropertyValuesHolder.ofFloat(View.Y, itemView.getY(), pos[1] - item.getHeight() / 2),
                             PropertyValuesHolder.ofFloat(View.SCALE_X, itemView.getScaleX(), 1),
                             PropertyValuesHolder.ofFloat(View.SCALE_Y, itemView.getScaleY(), 1),
                             PropertyValuesHolder.ofFloat(View.ALPHA, itemView.getAlpha(), 1),

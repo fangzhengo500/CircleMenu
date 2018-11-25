@@ -65,7 +65,7 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
     // angle
     private float mStartAngle = 180;
-    private float mSweepAngle = 90;
+    private float mSweepAngle = 360;
 
     // animated
     private Animator mAnimator;
@@ -88,25 +88,6 @@ public class CircleMenu extends ViewGroup implements IMenu {
         super(context, attrs, defStyleAttr);
         this.setWillNotDraw(false);
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
-        TextView item1 = new TextView(context);
-        TextView item2 = new TextView(context);
-        TextView item3 = new TextView(context);
-
-        item1.setText("1");
-        item2.setText("2");
-        item3.setText("3");
-        item1.setBackgroundColor(0xffff6666);
-        item2.setBackgroundColor(0xff66ff66);
-        item3.setBackgroundColor(0xff6666ff);
-
-        mItems.add(new BaseItem(item1, 60, 60));
-        mItems.add(new BaseItem(item2, 60, 60));
-        mItems.add(new BaseItem(item3, 60, 60));
-
-        for (IItem item : mItems) {
-            addView(item.getView());
-        }
     }
 
     @Override
@@ -171,7 +152,9 @@ public class CircleMenu extends ViewGroup implements IMenu {
         }
 
         for (IItem item : mItems) {
-            item.getView().layout(anchorX - 50, anchorY - 50, anchorX + 50, anchorY + 50);
+            int horizonlSize = item.getWidht() / 2;
+            int verticalSize = item.getHeight() / 2;
+            item.getView().layout(anchorX - horizonlSize, anchorY - verticalSize, anchorX + horizonlSize, anchorY + verticalSize);
         }
     }
 
@@ -201,6 +184,9 @@ public class CircleMenu extends ViewGroup implements IMenu {
         if (mAnimator != null) {
             mAnimator.addListener(mMenuOpenListener);
             mAnimator.start();
+            if (!animated) {
+                mAnimator.end();
+            }
         }
     }
 
@@ -213,6 +199,9 @@ public class CircleMenu extends ViewGroup implements IMenu {
         if (mAnimator != null) {
             mAnimator.addListener(mMenuCloseListener);
             mAnimator.start();
+            if (!animated) {
+                mAnimator.end();
+            }
         }
     }
 
@@ -268,6 +257,10 @@ public class CircleMenu extends ViewGroup implements IMenu {
     }
 
     public void setActionItem(BaseItem actionItem) {
+        if (mActionItem != null) {
+            removeView(mActionItem.getView());
+        }
+
         mActionItem = actionItem;
         if (actionItem != null) {
             addView(actionItem.getView());
@@ -279,7 +272,15 @@ public class CircleMenu extends ViewGroup implements IMenu {
     }
 
     public void setItems(List<IItem> items) {
-        mItems = items;
+        if (items == null) {
+            mItems.clear();
+        } else {
+            mItems = items;
+        }
+
+        for (IItem item : mItems) {
+            addView(item.getView());
+        }
     }
 
     public float getRadius() {

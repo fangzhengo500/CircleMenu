@@ -93,8 +93,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView(Bundle savedInstanceState) {
         // menu
-        View actionView = LayoutInflater.from(this).inflate(R.layout.item_action_view, mMenu, false);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View actionView = inflater.inflate(R.layout.action_view, null, false);
         mMenu.setActionItem(new BaseItem(actionView, 80, 80));
+
+        List<IMenu.IItem> items = new ArrayList<>();
+        items.add(new BaseItem(inflater.inflate(R.layout.menu_item, null, false), 20, 20));
+        items.add(new BaseItem(inflater.inflate(R.layout.menu_item, null, false), 40, 40));
+        items.add(new BaseItem(inflater.inflate(R.layout.menu_item, null, false), 80, 80));
+        items.add(new BaseItem(inflater.inflate(R.layout.menu_item, null, false), 100, 100));
+        mMenu.setItems(items);
+
         // anchor
         mSeekAnchorOffsetX.setProgress(mMenu.getAnchorOffsetX() + mSeekAnchorOffsetX.getMax() / 2);
         mSeekAnchorOffsetY.setProgress(mMenu.getAnchorOffsetY() + mSeekAnchorOffsetY.getMax() / 2);
