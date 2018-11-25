@@ -3,20 +3,19 @@ package com.loosu.sample;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.loosu.floatingmenu.circlemenu.BaseItem;
 import com.loosu.floatingmenu.circlemenu.CircleMenu;
 import com.loosu.floatingmenu.IMenu;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.security.auth.login.LoginException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, IMenu.OnStateChangeListener {
     private static final String TAG = "MainActivity";
@@ -93,7 +92,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView(Bundle savedInstanceState) {
+        // menu
+        View actionView = LayoutInflater.from(this).inflate(R.layout.item_action_view, mMenu, false);
+        mMenu.setActionItem(new BaseItem(actionView, 80, 80));
         // anchor
+        mSeekAnchorOffsetX.setProgress(mMenu.getAnchorOffsetX() + mSeekAnchorOffsetX.getMax() / 2);
+        mSeekAnchorOffsetY.setProgress(mMenu.getAnchorOffsetY() + mSeekAnchorOffsetY.getMax() / 2);
 
         // radius
         mSeekMinRadius.setProgress((int) mMenu.getRadiusMin());
@@ -231,4 +235,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.i(TAG, "onMenuStateChange: " + state.toString());
         Toast.makeText(this, "onMenuStateChange: " + state.toString(), Toast.LENGTH_SHORT).show();
     }
+
 }

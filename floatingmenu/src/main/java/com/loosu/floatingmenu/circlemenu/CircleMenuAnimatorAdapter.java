@@ -21,8 +21,8 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
 
         // action item 动画
         ObjectAnimator actionViewAnimator = null;
-        if (menu.getItemAction() != null && menu.getItemAction().getView() != null) {
-            View actionView = menu.getItemAction().getView();
+        if (menu.getActionItem() != null && menu.getActionItem().getView() != null) {
+            View actionView = menu.getActionItem().getView();
 
             // 先缩小再放大
             PropertyValuesHolder[] holder1 = {
@@ -38,8 +38,8 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
 
         // item 动画
         List<Animator> animatorList = new ArrayList<>();
-        if (menu.getItemAction() != null && menu.getItemAction().getView() != null && menu.getItems() != null) {
-            View actionView = menu.getItemAction().getView();
+        if (menu.getActionItem() != null && menu.getActionItem().getView() != null && menu.getItems() != null) {
+            View actionView = menu.getActionItem().getView();
 
             float anchorX = actionView.getX();
             float anchorY = actionView.getY();
@@ -99,8 +99,8 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
         List<Animator> animatorList = new ArrayList<>();
 
         // item 动画
-        if (menu.getItemAction() != null && menu.getItemAction().getView() != null && menu.getItems() != null) {
-            View actionView = menu.getItemAction().getView();
+        if (menu.getActionItem() != null && menu.getActionItem().getView() != null && menu.getItems() != null) {
+            View actionView = menu.getActionItem().getView();
 
             float anchorX = actionView.getX();
             float anchorY = actionView.getY();
@@ -134,8 +134,8 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
 
         // action item 动画
         ObjectAnimator actionViewAnimator = null;
-        if (menu.getItemAction() != null && menu.getItemAction().getView() != null) {
-            View actionView = menu.getItemAction().getView();
+        if (menu.getActionItem() != null && menu.getActionItem().getView() != null) {
+            View actionView = menu.getActionItem().getView();
 
             // 先缩小再放大
             PropertyValuesHolder[] holder1 = {

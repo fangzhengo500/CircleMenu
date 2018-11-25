@@ -7,16 +7,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Property;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.loosu.floatingmenu.IMenu;
-import com.loosu.floatingmenu.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,6 @@ public class CircleMenu extends ViewGroup implements IMenu {
             return object.getRadius();
         }
     };
-    private Animator mAnimator;
 
     public enum Anchor {
         CENTER,
@@ -50,28 +48,33 @@ public class CircleMenu extends ViewGroup implements IMenu {
         RIGHT_BOTTOM,
     }
 
-    private float mRadiusMax = 500;
-    private float mRadiusMin = 0;
-
-    private float mStartAngle = 180;
-    private float mSweepAngle = 90;
-
-    private float mRadius = mRadiusMin;
-
+    // menu
     private State mState = State.CLOSED;
+    private BaseItem mActionItem = null;
+    private List<IMenu.IItem> mItems = new ArrayList<>();
 
+    // anchor
     private Anchor mAnchor = Anchor.CENTER;
     private int mAnchorOffsetX = 0;
     private int mAnchorOffsetY = 0;
 
-    private IAnimatedAdapter<CircleMenu> mAnimatedAdapter = new CircleMenuAnimatorAdapter();
+    // radius
+    private float mRadiusMax = 500;
+    private float mRadiusMin = 0;
+    private float mRadius = mRadiusMin;
+
+    // angle
+    private float mStartAngle = 180;
+    private float mSweepAngle = 90;
+
+    // animated
+    private Animator mAnimator;
+    private IAnimatedAdapter<CircleMenu> mAnimatedAdapter = new CircleMenuAnimatorAdapter();        // 动画适配器
 
     private OnStateChangeListener mStateChangeListener = null;
 
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private ActionItem mItemAction = null;
 
-    private List<IMenu.IItem> mItems = new ArrayList<>();
 
     public CircleMenu(Context context) {
         this(context, null);
@@ -97,19 +100,13 @@ public class CircleMenu extends ViewGroup implements IMenu {
         item2.setBackgroundColor(0xff66ff66);
         item3.setBackgroundColor(0xff6666ff);
 
-        mItems.add(new MenuItem(item1));
-        mItems.add(new MenuItem(item2));
-        mItems.add(new MenuItem(item3));
+        mItems.add(new BaseItem(item1, 60, 60));
+        mItems.add(new BaseItem(item2, 60, 60));
+        mItems.add(new BaseItem(item3, 60, 60));
 
         for (IItem item : mItems) {
             addView(item.getView());
         }
-
-        ImageView actionView = new ImageView(context);
-        actionView.setImageResource(R.drawable.icon_github);
-
-        mItemAction = new ActionItem(actionView);
-        addView(mItemAction.getView());
     }
 
     @Override
@@ -165,7 +162,13 @@ public class CircleMenu extends ViewGroup implements IMenu {
                 break;
         }
 
-        mItemAction.getView().layout(anchorX - 50, anchorY - 50, anchorX + 50, anchorY + 50);
+        if (mActionItem != null) {
+            View actionView = mActionItem.getView();
+            LayoutParams params = actionView.getLayoutParams();
+            int width = mActionItem.getWidht();
+            int height = mActionItem.getHeight();
+            actionView.layout(anchorX - width / 2, anchorY - height / 2, anchorX + width / 2, anchorY + height / 2);
+        }
 
         for (IItem item : mItems) {
             item.getView().layout(anchorX - 50, anchorY - 50, anchorX + 50, anchorY + 50);
@@ -175,14 +178,18 @@ public class CircleMenu extends ViewGroup implements IMenu {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        View actionView = mItemAction.getView();
-        int anchorX = (actionView.getRight() + actionView.getLeft()) / 2;
-        int anchorY = (actionView.getBottom() + actionView.getTop()) / 2;
 
-        mPaint.setColor(Color.WHITE);
-        mPaint.setShadowLayer(10f, 0, 0, 0x33333333);
+        if (mActionItem != null) {
+            View actionView = mActionItem.getView();
+            int anchorX = (actionView.getRight() + actionView.getLeft()) / 2;
+            int anchorY = (actionView.getBottom() + actionView.getTop()) / 2;
 
-        canvas.drawCircle(anchorX, anchorY, mRadius, mPaint);
+            mPaint.setColor(Color.WHITE);
+            mPaint.setShadowLayer(10f, 0, 0, 0x33333333);
+
+            canvas.drawCircle(anchorX, anchorY, mRadius, mPaint);
+        }
+
     }
 
     @Override
@@ -231,6 +238,9 @@ public class CircleMenu extends ViewGroup implements IMenu {
         if (anchor == null) {
             return;
         }
+        if (mAnimator != null) {
+            mAnimator.end();
+        }
         mAnchor = anchor;
         requestLayout();
     }
@@ -253,12 +263,15 @@ public class CircleMenu extends ViewGroup implements IMenu {
         requestLayout();
     }
 
-    public ActionItem getItemAction() {
-        return mItemAction;
+    public BaseItem getActionItem() {
+        return mActionItem;
     }
 
-    public void setItemAction(ActionItem itemAction) {
-        mItemAction = itemAction;
+    public void setActionItem(BaseItem actionItem) {
+        mActionItem = actionItem;
+        if (actionItem != null) {
+            addView(actionItem.getView());
+        }
     }
 
     public List<IItem> getItems() {
