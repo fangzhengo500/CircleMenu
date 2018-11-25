@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loosu.floatingmenu.circlemenu.BaseItem;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // radius
     private SeekBar mSeekMinRadius;
     private SeekBar mSeekMaxRadius;
+    private SeekBar mSeekItemRadius;
 
     // angle
     private SeekBar mSeekStartAngle;
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // radius
         mSeekMinRadius = findViewById(R.id.seek_min_radius);
         mSeekMaxRadius = findViewById(R.id.seek_max_radius);
+        mSeekItemRadius = findViewById(R.id.seek_item_radius);
 
         // angle
         mSeekStartAngle = findViewById(R.id.seek_start_angle);
@@ -97,11 +100,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         View actionView = inflater.inflate(R.layout.action_view, null, false);
         mMenu.setActionItem(new BaseItem(actionView, 80, 80));
 
+        TextView item1 = (TextView) inflater.inflate(R.layout.menu_item, null, false);
+        TextView item2 = (TextView) inflater.inflate(R.layout.menu_item, null, false);
+        TextView item3 = (TextView) inflater.inflate(R.layout.menu_item, null, false);
+        TextView item4 = (TextView) inflater.inflate(R.layout.menu_item, null, false);
+
+        item1.setText(String.valueOf(1));
+        item2.setText(String.valueOf(2));
+        item3.setText(String.valueOf(3));
+        item4.setText(String.valueOf(4));
+
         List<IMenu.IItem> items = new ArrayList<>();
-        items.add(new BaseItem(inflater.inflate(R.layout.menu_item, null, false), 20, 20));
-        items.add(new BaseItem(inflater.inflate(R.layout.menu_item, null, false), 40, 40));
-        items.add(new BaseItem(inflater.inflate(R.layout.menu_item, null, false), 80, 80));
-        items.add(new BaseItem(inflater.inflate(R.layout.menu_item, null, false), 100, 100));
+        items.add(new BaseItem(item1, 20, 20));
+        items.add(new BaseItem(item2, 40, 40));
+        items.add(new BaseItem(item3, 80, 80));
+        items.add(new BaseItem(item4, 100, 100));
         mMenu.setItems(items);
 
         // anchor
@@ -109,8 +122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSeekAnchorOffsetY.setProgress(mMenu.getAnchorOffsetY() + mSeekAnchorOffsetY.getMax() / 2);
 
         // radius
-        mSeekMinRadius.setProgress((int) mMenu.getRadiusMin());
-        mSeekMaxRadius.setProgress((int) mMenu.getRadiusMax());
+        mSeekMinRadius.setProgress((int) mMenu.getMenuRadiusMin());
+        mSeekMaxRadius.setProgress((int) mMenu.getMenuRadiusMax());
 
         // angle
         mSeekStartAngle.setProgress((int) mMenu.getStartAngle());
@@ -132,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // radius
         mSeekMinRadius.setOnSeekBarChangeListener(this);
         mSeekMaxRadius.setOnSeekBarChangeListener(this);
+        mSeekItemRadius.setOnSeekBarChangeListener(this);
 
         // angle
         mSeekStartAngle.setOnSeekBarChangeListener(this);
@@ -215,10 +229,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mMenu.setAnchorOffsetY(progress - seekBar.getMax() / 2);
                 break;
             case R.id.seek_min_radius:
-                mMenu.setRadiusMin(progress);
+                mMenu.setMenuRadiusMin(progress);
                 break;
             case R.id.seek_max_radius:
-                mMenu.setRadiusMax(progress);
+                mMenu.setMenuRadiusMax(progress);
+                break;
+            case R.id.seek_item_radius:
+                mMenu.setItemRadius(progress);
                 break;
             case R.id.seek_start_angle:
                 mMenu.setStartAngle(360f * progress / seekBar.getMax());

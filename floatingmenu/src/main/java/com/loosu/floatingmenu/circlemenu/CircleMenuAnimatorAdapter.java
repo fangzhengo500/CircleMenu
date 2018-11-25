@@ -7,6 +7,7 @@ import android.animation.PropertyValuesHolder;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.RectF;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.loosu.floatingmenu.IMenu;
@@ -17,7 +18,28 @@ import java.util.List;
 public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleMenu> {
 
     @Override
-    public Animator obtainOpenAnimator(CircleMenu menu) {
+    public Animator onLayout(@NonNull CircleMenu menu) {
+        if (menu.getState() == IMenu.State.OPENED) {
+            for (IMenu.IItem iItem : menu.getItems()) {
+                View itemView = iItem.getView();
+                itemView.setAlpha(1);
+                itemView.setScaleX(1);
+                itemView.setScaleY(1);
+            }
+
+        }else if (menu.getState() == IMenu.State.CLOSED){
+            for (IMenu.IItem iItem : menu.getItems()) {
+                View itemView = iItem.getView();
+                itemView.setAlpha(0);
+                itemView.setScaleX(0);
+                itemView.setScaleY(0);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Animator obtainOpenAnimator(@NonNull CircleMenu menu) {
 
         // action item 动画
         ObjectAnimator actionViewAnimator = null;
@@ -30,10 +52,11 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                     PropertyValuesHolder.ofFloat(View.SCALE_Y, actionView.getScaleY(), 0, 1),
             };
             actionViewAnimator = ObjectAnimator.ofPropertyValuesHolder(actionView, holder1);
+            actionViewAnimator.setDuration(600);
         }
 
         // menu 动画
-        ObjectAnimator menuAnimator = ObjectAnimator.ofPropertyValuesHolder(menu, PropertyValuesHolder.ofFloat(CircleMenu.RADIUS, menu.getRadius(), menu.getRadiusMax()));
+        ObjectAnimator menuAnimator = ObjectAnimator.ofPropertyValuesHolder(menu, PropertyValuesHolder.ofFloat(CircleMenu.MENU_RADIUS, menu.getMenuRadius(), menu.getMenuRadiusMax()));
         menuAnimator.setDuration(200);
 
         // item 动画
@@ -44,15 +67,15 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
 
             float anchorX = actionView.getX() + actionView.getWidth() / 2;
             float anchorY = actionView.getY() + actionView.getHeight() / 2;
-            float radiusMax = menu.getRadiusMax();
+            float itemRadius = menu.getItemRadius();
 
             List<IMenu.IItem> items = menu.getItems();
             if (items != null && items.size() > 0) {
                 RectF rectF = new RectF(
-                        anchorX - radiusMax,
-                        anchorY - radiusMax,
-                        anchorX + radiusMax,
-                        anchorY + radiusMax);
+                        anchorX - itemRadius,
+                        anchorY - itemRadius,
+                        anchorX + itemRadius,
+                        anchorY + itemRadius);
                 Path path = new Path();
                 path.addArc(rectF, menu.getStartAngle(), menu.getSweepAngle());
                 PathMeasure measure = new PathMeasure(path, false);
@@ -96,7 +119,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
     }
 
     @Override
-    public Animator obtainCloseAnimator(CircleMenu menu) {
+    public Animator obtainCloseAnimator(@NonNull CircleMenu menu) {
         List<Animator> animatorList = new ArrayList<>();
 
         // item 动画
@@ -130,7 +153,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
         }
 
         // menu 动画
-        ObjectAnimator menuAnimator = ObjectAnimator.ofPropertyValuesHolder(menu, PropertyValuesHolder.ofFloat(CircleMenu.RADIUS, menu.getRadius(), menu.getRadiusMin()));
+        ObjectAnimator menuAnimator = ObjectAnimator.ofPropertyValuesHolder(menu, PropertyValuesHolder.ofFloat(CircleMenu.MENU_RADIUS, menu.getMenuRadius(), menu.getMenuRadiusMin()));
         menuAnimator.setDuration(200);
 
         // action item 动画
@@ -144,6 +167,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                     PropertyValuesHolder.ofFloat(View.SCALE_Y, actionView.getScaleY(), 0, 1),
             };
             actionViewAnimator = ObjectAnimator.ofPropertyValuesHolder(actionView, holder1);
+            actionViewAnimator.setDuration(600);
         }
 
         AnimatorSet animatorSet = new AnimatorSet();

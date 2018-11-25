@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@drawable/ic_launcher_background"
     android:gravity="center"
-    android:background="@drawable/action_view_background"
-    android:textSize="14sp" />
+    android:textColor="#FF5"
+    android:textSize="14sp"
+    tools:text="123" />
 

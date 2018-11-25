@@ -1,6 +1,7 @@
 package com.loosu.floatingmenu;
 
 import android.animation.Animator;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 public interface IMenu {
@@ -32,9 +33,11 @@ public interface IMenu {
 
     public interface IAnimatedAdapter<M extends IMenu> {
 
-        public Animator obtainOpenAnimator(M menu);
+        public Animator onLayout(@NonNull M menu);
 
-        public Animator obtainCloseAnimator(M menu);
+        public Animator obtainOpenAnimator(@NonNull M menu);
+
+        public Animator obtainCloseAnimator(@NonNull M menu);
     }
 
     /**

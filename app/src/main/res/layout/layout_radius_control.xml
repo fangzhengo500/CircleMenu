@@ -17,7 +17,7 @@
 
             <TextView
                 style="@style/TextLabelStyle"
-                android:text="@string/radius" />
+                android:text="@string/menu_radius" />
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -34,7 +34,7 @@
 
                 <TextView
                     style="@style/TextSubLabel"
-                    android:text="@string/min_radius" />
+                    android:text="@string/min_menu_radius" />
 
                 <SeekBar
                     android:id="@+id/seek_min_radius"
@@ -58,10 +58,34 @@
 
                 <TextView
                     style="@style/TextSubLabel"
-                    android:text="@string/max_radius" />
+                    android:text="@string/max_menu_radius" />
 
                 <SeekBar
                     android:id="@+id/seek_max_radius"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="500" />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    style="@style/TextSubLabel"
+                    android:text="@string/item_radius" />
+
+                <SeekBar
+                    android:id="@+id/seek_item_radius"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="500" />

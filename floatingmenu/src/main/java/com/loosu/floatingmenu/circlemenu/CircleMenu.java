@@ -7,13 +7,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Property;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.loosu.floatingmenu.IMenu;
 
@@ -23,16 +21,16 @@ import java.util.List;
 public class CircleMenu extends ViewGroup implements IMenu {
     private static final String TAG = "CircleMenu";
 
-    public static final Property<CircleMenu, Float> RADIUS = new Property<CircleMenu, Float>(Float.class, "radius") {
+    public static final Property<CircleMenu, Float> MENU_RADIUS = new Property<CircleMenu, Float>(Float.class, "menu_radius") {
 
         @Override
         public void set(CircleMenu object, Float value) {
-            object.setRadius(value);
+            object.setMenuRadius(value);
         }
 
         @Override
         public Float get(CircleMenu object) {
-            return object.getRadius();
+            return object.getMenuRadius();
         }
     };
 
@@ -59,9 +57,11 @@ public class CircleMenu extends ViewGroup implements IMenu {
     private int mAnchorOffsetY = 0;
 
     // radius
-    private float mRadiusMax = 500;
-    private float mRadiusMin = 0;
-    private float mRadius = mRadiusMin;
+    private float mMenuRadiusMax;
+    private float mMenuRadiusMin;
+    private float mMenuRadius;
+
+    private float mItemRadius;
 
     // angle
     private float mStartAngle = 180;
@@ -93,8 +93,9 @@ public class CircleMenu extends ViewGroup implements IMenu {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         Log.d(TAG, "onSizeChanged: w = " + w + ", h = " + h + ", oldw = " + oldw + ", oldh = " + oldh);
-        mRadiusMax = Math.min(w, h) / 4;
-        mRadiusMin = mRadiusMax / 4;
+        mMenuRadiusMax = Math.min(w, h) / 2;
+        mMenuRadiusMin = mMenuRadiusMax / 4;
+        mItemRadius = mMenuRadiusMax * 0.7f;
     }
 
     @Override
@@ -154,7 +155,15 @@ public class CircleMenu extends ViewGroup implements IMenu {
         for (IItem item : mItems) {
             int horizonlSize = item.getWidht() / 2;
             int verticalSize = item.getHeight() / 2;
-            item.getView().layout(anchorX - horizonlSize, anchorY - verticalSize, anchorX + horizonlSize, anchorY + verticalSize);
+            View itemView = item.getView();
+            itemView.layout(anchorX - horizonlSize, anchorY - verticalSize, anchorX + horizonlSize, anchorY + verticalSize);
+        }
+
+        if (mAnimatedAdapter != null) {
+            Animator animator = mAnimatedAdapter.onLayout(this);
+            if (animator != null) {
+                animator.start();
+            }
         }
     }
 
@@ -170,7 +179,7 @@ public class CircleMenu extends ViewGroup implements IMenu {
             mPaint.setColor(Color.WHITE);
             mPaint.setShadowLayer(10f, 0, 0, 0x33333333);
 
-            canvas.drawCircle(anchorX, anchorY, mRadius, mPaint);
+            canvas.drawCircle(anchorX, anchorY, mMenuRadius, mPaint);
         }
 
     }
@@ -283,29 +292,37 @@ public class CircleMenu extends ViewGroup implements IMenu {
         }
     }
 
-    public float getRadius() {
-        return mRadius;
+    public float getMenuRadius() {
+        return mMenuRadius;
     }
 
-    public void setRadius(float radius) {
-        mRadius = radius;
+    public void setMenuRadius(float menuRadius) {
+        mMenuRadius = menuRadius;
         postInvalidate();
     }
 
-    public float getRadiusMax() {
-        return mRadiusMax;
+    public float getMenuRadiusMax() {
+        return mMenuRadiusMax;
     }
 
-    public void setRadiusMax(float radiusMax) {
-        mRadiusMax = radiusMax;
+    public void setMenuRadiusMax(float menuRadiusMax) {
+        mMenuRadiusMax = menuRadiusMax;
     }
 
-    public float getRadiusMin() {
-        return mRadiusMin;
+    public float getMenuRadiusMin() {
+        return mMenuRadiusMin;
     }
 
-    public void setRadiusMin(float radiusMin) {
-        mRadiusMin = radiusMin;
+    public void setMenuRadiusMin(float menuRadiusMin) {
+        mMenuRadiusMin = menuRadiusMin;
+    }
+
+    public float getItemRadius() {
+        return mItemRadius;
+    }
+
+    public void setItemRadius(float itemRadius) {
+        mItemRadius = itemRadius;
     }
 
     public float getStartAngle() {
