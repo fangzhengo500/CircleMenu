@@ -153,10 +153,10 @@ public class CircleMenu extends ViewGroup implements IMenu {
         }
 
         for (IItem item : mItems) {
-            int horizonlSize = item.getWidht() / 2;
+            int horizontalSize = item.getWidht() / 2;
             int verticalSize = item.getHeight() / 2;
             View itemView = item.getView();
-            itemView.layout(anchorX - horizonlSize, anchorY - verticalSize, anchorX + horizonlSize, anchorY + verticalSize);
+            itemView.layout(anchorX - horizontalSize, anchorY - verticalSize, anchorX + horizontalSize, anchorY + verticalSize);
         }
 
         if (mAnimatedAdapter != null) {
