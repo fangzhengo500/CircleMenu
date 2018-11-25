@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mMenu.setActionItem(new BaseItem(actionView, 80, 80));
 
         List<IMenu.IItem> items = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 6; i++) {
             TextView item = (TextView) inflater.inflate(R.layout.menu_item, null, false);
             final int finalI = i;
             item.setOnClickListener(new View.OnClickListener() {

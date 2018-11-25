@@ -21,6 +21,8 @@ import java.util.List;
 public class CircleMenu extends ViewGroup implements IMenu {
     private static final String TAG = "CircleMenu";
 
+    private final float INVALID_RADIUS = -1;    // 无效radius
+
     public static final Property<CircleMenu, Float> MENU_RADIUS = new Property<CircleMenu, Float>(Float.class, "menu_radius") {
 
         @Override
@@ -57,11 +59,11 @@ public class CircleMenu extends ViewGroup implements IMenu {
     private int mAnchorOffsetY = 0;
 
     // radius
-    private float mMenuRadiusMax;
-    private float mMenuRadiusMin;
-    private float mMenuRadius;
+    private float mMenuRadiusMax = INVALID_RADIUS;
+    private float mMenuRadiusMin = INVALID_RADIUS;
+    private float mMenuRadius = INVALID_RADIUS;
 
-    private float mItemRadius;
+    private float mItemRadius = INVALID_RADIUS;
 
     // angle
     private float mStartAngle = 180;
@@ -101,9 +103,17 @@ public class CircleMenu extends ViewGroup implements IMenu {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         Log.d(TAG, "onSizeChanged: w = " + w + ", h = " + h + ", oldw = " + oldw + ", oldh = " + oldh);
-        mMenuRadiusMax = Math.min(w, h) / 2;
-        mMenuRadiusMin = mMenuRadiusMax / 4;
-        mItemRadius = mMenuRadiusMax * 0.7f;
+        if (mMenuRadiusMax == INVALID_RADIUS) {
+            mMenuRadiusMax = Math.min(w, h) / 2;
+        }
+
+        if (mMenuRadiusMin == INVALID_RADIUS) {
+            mMenuRadiusMin = mMenuRadiusMax / 4;
+        }
+
+        if (mItemRadius == INVALID_RADIUS) {
+            mItemRadius = mMenuRadiusMax * 0.7f;
+        }
 
         if (getState() == State.CLOSED) {
             mMenuRadius = mMenuRadiusMin;
