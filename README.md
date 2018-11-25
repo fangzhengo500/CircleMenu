@@ -5,8 +5,10 @@
 <img src="assets/about.gif"  width="216" height="384">
 
 ### Anchor
-<img src="assets/anchor.gif"  width="216" height="384">
-<img src="assets/anchor_offset.gif"  width="216" height="384">
+<div align="center">
+    <img src="assets/anchor.gif"  width="216" height="384">
+    <img src="assets/anchor_offset.gif"  width="216" height="384">
+</div>
 
 ### Angle
 <img src="assets/angle.gif"  width="216" height="384">
