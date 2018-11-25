@@ -36,6 +36,7 @@ public class CircleMenu extends ViewGroup implements IMenu {
             return object.getRadius();
         }
     };
+    private Animator mAnimator;
 
     public enum Anchor {
         CENTER,
@@ -58,7 +59,10 @@ public class CircleMenu extends ViewGroup implements IMenu {
     private float mRadius = mRadiusMin;
 
     private State mState = State.CLOSED;
-    private Anchor mAnchor = Anchor.CENTER_BOTTOM;
+
+    private Anchor mAnchor = Anchor.CENTER;
+    private int mAnchorOffsetX = 0;
+    private int mAnchorOffsetY = 0;
 
     private IAnimatedAdapter<CircleMenu> mAnimatedAdapter = new CircleMenuAnimatorAdapter();
 
@@ -119,45 +123,45 @@ public class CircleMenu extends ViewGroup implements IMenu {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         Log.d(TAG, "onLayout: changed = " + changed + ", l = " + l + ", t = " + t + ", r = " + r + ", b = " + b);
 
-        int anchorX = 0;
-        int anchorY = 0;
+        int anchorX = mAnchorOffsetX;
+        int anchorY = mAnchorOffsetY;
 
         switch (mAnchor) {
             case CENTER:
-                anchorX = (r - l) / 2;
-                anchorY = (b - t) / 2;
+                anchorX += (r - l) / 2;
+                anchorY += (b - t) / 2;
                 break;
             case CENTER_LEFT:
-                anchorX = l;
-                anchorY = (b - t) / 2;
+                anchorX += l;
+                anchorY += (b - t) / 2;
                 break;
             case CENTER_TOP:
-                anchorX = (r - l) / 2;
-                anchorY = t;
+                anchorX += (r - l) / 2;
+                anchorY += t;
                 break;
             case CENTER_RIGHT:
-                anchorX = r;
-                anchorY = (b - t) / 2;
+                anchorX += r;
+                anchorY += (b - t) / 2;
                 break;
             case CENTER_BOTTOM:
-                anchorX = (r - l) / 2;
-                anchorY = b;
+                anchorX += (r - l) / 2;
+                anchorY += b;
                 break;
             case LEFT_TOP:
-                anchorX = l;
-                anchorY = t;
+                anchorX += l;
+                anchorY += t;
                 break;
             case LEFT_BOTTOM:
-                anchorX = l;
-                anchorY = b;
+                anchorX += l;
+                anchorY += b;
                 break;
             case RIGHT_TOP:
-                anchorX = r;
-                anchorY = t;
+                anchorX += r;
+                anchorY += t;
                 break;
             case RIGHT_BOTTOM:
-                anchorX = r;
-                anchorY = b;
+                anchorX += r;
+                anchorY += b;
                 break;
         }
 
@@ -174,38 +178,40 @@ public class CircleMenu extends ViewGroup implements IMenu {
         View actionView = mItemAction.getView();
         int anchorX = (actionView.getRight() + actionView.getLeft()) / 2;
         int anchorY = (actionView.getBottom() + actionView.getTop()) / 2;
-//        float left = anchorX - mRadius;
-//        float top = anchorY - mRadius;
-//        float right = anchorX + mRadius;
-//        float bottom = anchorY + mRadius;
-//        RectF panelRect = new RectF(left, top, right, bottom);
 
         mPaint.setColor(Color.WHITE);
         mPaint.setShadowLayer(10f, 0, 0, 0x33333333);
-        //canvas.d(panelRect, 0, 360, true, mPaint);
 
-        Log.d(TAG, "onDraw: anchorX = " + anchorX + ", anchorY = " + anchorY + ", mRadius = " + mRadius);
         canvas.drawCircle(anchorX, anchorY, mRadius, mPaint);
     }
 
     @Override
     public void open(boolean animated) {
+        cancelAnimated();
         changeState(State.START_OPEN);
 
-        Animator animator = mAnimatedAdapter.obtainOpenAnimator(this);
-        if (animator != null) {
-            animator.addListener(mMenuOpenListener);
-            animator.start();
+        mAnimator = mAnimatedAdapter.obtainOpenAnimator(this);
+        if (mAnimator != null) {
+            mAnimator.addListener(mMenuOpenListener);
+            mAnimator.start();
         }
     }
 
+
     @Override
     public void close(boolean animated) {
+        cancelAnimated();
         changeState(State.START_CLOSE);
-        Animator animator = mAnimatedAdapter.obtainCloseAnimator(this);
-        if (animator != null) {
-            animator.addListener(mMenuCloseListener);
-            animator.start();
+        mAnimator = mAnimatedAdapter.obtainCloseAnimator(this);
+        if (mAnimator != null) {
+            mAnimator.addListener(mMenuCloseListener);
+            mAnimator.start();
+        }
+    }
+
+    private void cancelAnimated() {
+        if (mAnimator != null) {
+            mAnimator.cancel();
         }
     }
 
@@ -226,6 +232,24 @@ public class CircleMenu extends ViewGroup implements IMenu {
             return;
         }
         mAnchor = anchor;
+        requestLayout();
+    }
+
+    public int getAnchorOffsetX() {
+        return mAnchorOffsetX;
+    }
+
+    public void setAnchorOffsetX(int anchorOffsetX) {
+        mAnchorOffsetX = anchorOffsetX;
+        requestLayout();
+    }
+
+    public int getAnchorOffsetY() {
+        return mAnchorOffsetY;
+    }
+
+    public void setAnchorOffsetY(int anchorOffsetY) {
+        mAnchorOffsetY = anchorOffsetY;
         requestLayout();
     }
 

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.loosu.floatingmenu.circlemenu.CircleMenu;
 import com.loosu.floatingmenu.IMenu;
@@ -20,8 +21,10 @@ import javax.security.auth.login.LoginException;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, IMenu.OnStateChangeListener {
     private static final String TAG = "MainActivity";
 
+    // menu
     private CircleMenu mMenu;
 
+    // anchor
     private List<RadioButton> mAnchorRadioBtn = new ArrayList<>();
     private RadioButton mRbAnchorCenter;
     private RadioButton mRbAnchorCenterLeft;
@@ -32,12 +35,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RadioButton mRbAnchorLeftBottom;
     private RadioButton mRbAnchorRightTop;
     private RadioButton mRbAnchorRightBottom;
+    private SeekBar mSeekAnchorOffsetX;
+    private SeekBar mSeekAnchorOffsetY;
 
+    // radius
     private SeekBar mSeekMinRadius;
     private SeekBar mSeekMaxRadius;
+
+    // angle
     private SeekBar mSeekStartAngle;
     private SeekBar mSeekSweepAngle;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +55,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initListener(savedInstanceState);
     }
 
-
     private void findView(Bundle savedInstanceState) {
+        // menu
         mMenu = findViewById(R.id.menu);
-        mSeekMinRadius = findViewById(R.id.seek_min_radius);
-        mSeekMaxRadius = findViewById(R.id.seek_max_radius);
 
-        mSeekStartAngle = findViewById(R.id.seek_start_angle);
-        mSeekSweepAngle = findViewById(R.id.seek_sweep_angle);
-
+        // anchor
         mRbAnchorCenter = findViewById(R.id.rb_anchor_center);
         mRbAnchorCenterLeft = findViewById(R.id.rb_anchor_center_left);
         mRbAnchorCenterTop = findViewById(R.id.rb_anchor_center_top);
@@ -76,27 +79,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAnchorRadioBtn.add(mRbAnchorLeftBottom);
         mAnchorRadioBtn.add(mRbAnchorRightTop);
         mAnchorRadioBtn.add(mRbAnchorRightBottom);
+
+        mSeekAnchorOffsetX = findViewById(R.id.seek_anchor_offset_x);
+        mSeekAnchorOffsetY = findViewById(R.id.seek_anchor_offset_y);
+
+        // radius
+        mSeekMinRadius = findViewById(R.id.seek_min_radius);
+        mSeekMaxRadius = findViewById(R.id.seek_max_radius);
+
+        // angle
+        mSeekStartAngle = findViewById(R.id.seek_start_angle);
+        mSeekSweepAngle = findViewById(R.id.seek_sweep_angle);
     }
 
     private void initView(Bundle savedInstanceState) {
+        // anchor
+
+        // radius
         mSeekMinRadius.setProgress((int) mMenu.getRadiusMin());
         mSeekMaxRadius.setProgress((int) mMenu.getRadiusMax());
 
+        // angle
         mSeekStartAngle.setProgress((int) mMenu.getStartAngle());
         mSeekSweepAngle.setProgress((int) (mMenu.getSweepAngle() + 360f) * mSeekSweepAngle.getMax() / 720);
     }
 
     private void initListener(Bundle savedInstanceState) {
+        // menu
         mMenu.setOnClickListener(this);
         mMenu.setStateChangeListener(this);
 
+        // anchor
         for (RadioButton radioButton : mAnchorRadioBtn) {
             radioButton.setOnClickListener(this);
         }
+        mSeekAnchorOffsetX.setOnSeekBarChangeListener(this);
+        mSeekAnchorOffsetY.setOnSeekBarChangeListener(this);
 
+        // radius
         mSeekMinRadius.setOnSeekBarChangeListener(this);
         mSeekMaxRadius.setOnSeekBarChangeListener(this);
 
+        // angle
         mSeekStartAngle.setOnSeekBarChangeListener(this);
         mSeekSweepAngle.setOnSeekBarChangeListener(this);
     }
@@ -130,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void onClickAnchorBtn(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.rb_anchor_center:
                 mMenu.setAnchor(CircleMenu.Anchor.CENTER);
                 break;
@@ -171,6 +195,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()) {
+            case R.id.seek_anchor_offset_x:
+                mMenu.setAnchorOffsetX(progress - seekBar.getMax() / 2);
+                break;
+            case R.id.seek_anchor_offset_y:
+                mMenu.setAnchorOffsetY(progress - seekBar.getMax() / 2);
+                break;
             case R.id.seek_min_radius:
                 mMenu.setRadiusMin(progress);
                 break;
@@ -199,5 +229,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onMenuStateChange(IMenu menu, IMenu.State state) {
         Log.i(TAG, "onMenuStateChange: " + state.toString());
+        Toast.makeText(this, "onMenuStateChange: " + state.toString(), Toast.LENGTH_SHORT).show();
     }
 }

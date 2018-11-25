@@ -18,4 +18,6 @@
     <string name="anchor_center_top">Center Top</string>
     <string name="anchor_center_right">Center Right</string>
     <string name="anchor_center_bottom">Center Bottom</string>
+    <string name="anchor_offset_x">Anchor Offset X</string>
+    <string name="anchor_offset_y">Anchor Offset Y</string>
 </resources>

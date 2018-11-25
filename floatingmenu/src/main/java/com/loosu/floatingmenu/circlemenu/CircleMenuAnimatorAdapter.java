@@ -34,6 +34,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
 
         // menu 动画
         ObjectAnimator menuAnimator = ObjectAnimator.ofPropertyValuesHolder(menu, PropertyValuesHolder.ofFloat(CircleMenu.RADIUS, menu.getRadius(), menu.getRadiusMax()));
+        menuAnimator.setDuration(200);
 
         // item 动画
         List<Animator> animatorList = new ArrayList<>();
@@ -129,6 +130,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
 
         // menu 动画
         ObjectAnimator menuAnimator = ObjectAnimator.ofPropertyValuesHolder(menu, PropertyValuesHolder.ofFloat(CircleMenu.RADIUS, menu.getRadius(), menu.getRadiusMin()));
+        menuAnimator.setDuration(200);
 
         // action item 动画
         ObjectAnimator actionViewAnimator = null;
