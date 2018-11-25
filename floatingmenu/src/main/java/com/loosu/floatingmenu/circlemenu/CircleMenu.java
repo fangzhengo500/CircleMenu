@@ -67,10 +67,16 @@ public class CircleMenu extends ViewGroup implements IMenu {
     private float mStartAngle = 180;
     private float mSweepAngle = 360;
 
+    // menu color
+    private final int DEFAULT_MENU_COLOR = Color.WHITE;
+    private int mMenuShadowColor = 0x33333333;
+    private float mMenuShadowRadius = 10f;
+
     // animated
     private Animator mAnimator;
     private IAnimatedAdapter<CircleMenu> mAnimatedAdapter = new CircleMenuAnimatorAdapter();        // 动画适配器
 
+    // listener
     private OnStateChangeListener mStateChangeListener = null;
 
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -88,6 +94,8 @@ public class CircleMenu extends ViewGroup implements IMenu {
         super(context, attrs, defStyleAttr);
         this.setWillNotDraw(false);
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        mPaint.setColor(DEFAULT_MENU_COLOR);
+        mPaint.setShadowLayer(mMenuShadowRadius, 0, 0, mMenuShadowColor);
     }
 
     @Override
@@ -96,6 +104,14 @@ public class CircleMenu extends ViewGroup implements IMenu {
         mMenuRadiusMax = Math.min(w, h) / 2;
         mMenuRadiusMin = mMenuRadiusMax / 4;
         mItemRadius = mMenuRadiusMax * 0.7f;
+
+        if (getState() == State.CLOSED) {
+            mMenuRadius = mMenuRadiusMin;
+
+        } else if (getState() == State.OPENED) {
+            mMenuRadius = mMenuRadiusMax;
+        }
+
     }
 
     @Override
@@ -175,9 +191,6 @@ public class CircleMenu extends ViewGroup implements IMenu {
             View actionView = mActionItem.getView();
             int anchorX = (actionView.getRight() + actionView.getLeft()) / 2;
             int anchorY = (actionView.getBottom() + actionView.getTop()) / 2;
-
-            mPaint.setColor(Color.WHITE);
-            mPaint.setShadowLayer(10f, 0, 0, 0x33333333);
 
             canvas.drawCircle(anchorX, anchorY, mMenuRadius, mPaint);
         }
@@ -272,7 +285,9 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
         mActionItem = actionItem;
         if (actionItem != null) {
-            addView(actionItem.getView());
+            View actionView = actionItem.getView();
+            actionView.setOnClickListener(mActionViewClickListener);
+            addView(actionView);
         }
     }
 
@@ -343,6 +358,35 @@ public class CircleMenu extends ViewGroup implements IMenu {
         requestLayout();
     }
 
+    public int getMenuColor() {
+        return mPaint.getColor();
+    }
+
+    public void setMenuColor(int menuColor) {
+        mPaint.setColor(menuColor);
+        postInvalidate();
+    }
+
+    public int getMenuShadowColor() {
+        return mMenuShadowColor;
+    }
+
+    public void setMenuShadowColor(int menuShadowColor) {
+        mMenuShadowColor = menuShadowColor;
+        mPaint.setShadowLayer(mMenuShadowRadius, 0, 0, menuShadowColor);
+        postInvalidate();
+    }
+
+    public float getMenuShadowRadius() {
+        return mMenuShadowRadius;
+    }
+
+    public void setMenuShadowRadius(float menuShadowRadius) {
+        mMenuShadowRadius = menuShadowRadius;
+        mPaint.setShadowLayer(menuShadowRadius, 0, 0, mMenuShadowColor);
+        postInvalidate();
+    }
+
     public State getState() {
         return mState;
     }
@@ -355,6 +399,9 @@ public class CircleMenu extends ViewGroup implements IMenu {
         mStateChangeListener = stateChangeListener;
     }
 
+    /**
+     * open animator listener
+     */
     private final AnimatorListenerAdapter mMenuOpenListener = new AnimatorListenerAdapter() {
         @Override
         public void onAnimationStart(Animator animation) {
@@ -364,10 +411,12 @@ public class CircleMenu extends ViewGroup implements IMenu {
         @Override
         public void onAnimationEnd(Animator animation) {
             changeState(State.OPENED);
-
         }
     };
 
+    /**
+     * close animator listener
+     */
     private final AnimatorListenerAdapter mMenuCloseListener = new AnimatorListenerAdapter() {
         @Override
         public void onAnimationStart(Animator animation) {
@@ -377,6 +426,20 @@ public class CircleMenu extends ViewGroup implements IMenu {
         @Override
         public void onAnimationEnd(Animator animation) {
             changeState(State.CLOSED);
+        }
+    };
+
+    private final OnClickListener mActionViewClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (getState()) {
+                case OPENED:
+                    close(true);
+                    break;
+                case CLOSED:
+                    open(true);
+                    break;
+            }
         }
     };
 }

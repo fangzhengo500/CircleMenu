@@ -3,6 +3,7 @@
     <string name="min_menu_radius">Min Menu Radius</string>
     <string name="max_menu_radius">Max Menu Radius</string>
     <string name="menu_radius">Menu Radius</string>
+    <string name="item_radius">Item Radius</string>
 
     <string name="angle">Angle</string>
     <string name="start_angle">Start Angle</string>
@@ -20,5 +21,8 @@
     <string name="anchor_center_bottom">Center Bottom</string>
     <string name="anchor_offset_x">Anchor Offset X</string>
     <string name="anchor_offset_y">Anchor Offset Y</string>
-    <string name="item_radius">Item Radius</string>
+
+    <string name="menu_color">Menu Color</string>
+    <string name="shadow_color">Shadow Color</string>
+    <string name="menu_shadow_radius">Menu Shadow Radius</string>
 </resources>

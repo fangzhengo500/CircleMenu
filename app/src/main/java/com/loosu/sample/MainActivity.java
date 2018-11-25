@@ -1,16 +1,24 @@
 package com.loosu.sample;
 
+import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
+import com.flask.colorpicker.builder.ColorPickerClickListener;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.loosu.floatingmenu.circlemenu.BaseItem;
 import com.loosu.floatingmenu.circlemenu.CircleMenu;
 import com.loosu.floatingmenu.IMenu;
@@ -46,6 +54,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // angle
     private SeekBar mSeekStartAngle;
     private SeekBar mSeekSweepAngle;
+
+    // menu color
+    private ImageView mBtnMenuColor;
+    private ImageView mBtnMenuShadowColor;
+    private SeekBar mSeekMenuShadowRadius;
+
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +107,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // angle
         mSeekStartAngle = findViewById(R.id.seek_start_angle);
         mSeekSweepAngle = findViewById(R.id.seek_sweep_angle);
+
+        // menu color
+        mBtnMenuColor = findViewById(R.id.btn_menu_color);
+        mBtnMenuShadowColor = findViewById(R.id.btn_menu_shadow_color);
+        mSeekMenuShadowRadius = findViewById(R.id.seek_menu_shadow_radius);
+
+        mViewPager = findViewById(R.id.view_pager);
     }
 
     private void initView(Bundle savedInstanceState) {
@@ -128,11 +150,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // angle
         mSeekStartAngle.setProgress((int) mMenu.getStartAngle());
         mSeekSweepAngle.setProgress((int) (mMenu.getSweepAngle() + 360f) * mSeekSweepAngle.getMax() / 720);
+
+        // menu color
+        mBtnMenuColor.setImageDrawable(new ColorDrawable(mMenu.getMenuColor()));
+        mBtnMenuShadowColor.setImageDrawable(new ColorDrawable(mMenu.getMenuShadowColor()));
+
+        mViewPager.setAdapter(new MyPageAdapter(getSupportFragmentManager()));
     }
 
     private void initListener(Bundle savedInstanceState) {
         // menu
-        mMenu.setOnClickListener(this);
+        //mMenu.setOnClickListener(this);
         mMenu.setStateChangeListener(this);
 
         // anchor
@@ -150,21 +178,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // angle
         mSeekStartAngle.setOnSeekBarChangeListener(this);
         mSeekSweepAngle.setOnSeekBarChangeListener(this);
+
+        // menu color
+        mBtnMenuColor.setOnClickListener(this);
+        mBtnMenuShadowColor.setOnClickListener(this);
+        mSeekMenuShadowRadius.setOnSeekBarChangeListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.menu:
-                switch (mMenu.getState()) {
-                    case OPENED:
-                        mMenu.close(true);
-                        break;
-                    case CLOSED:
-                        mMenu.open(true);
-                        break;
-                }
-                break;
             case R.id.rb_anchor_center:
             case R.id.rb_anchor_center_left:
             case R.id.rb_anchor_center_top:
@@ -175,6 +198,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.rb_anchor_right_top:
             case R.id.rb_anchor_right_bottom:
                 onClickAnchorBtn(v);
+                break;
+            case R.id.btn_menu_color:
+                onClickBtnMenuColor(v);
+                break;
+            case R.id.btn_menu_shadow_color:
+                onClickBtnMenuShadowColor(v);
                 break;
         }
 
@@ -219,6 +248,62 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void onClickBtnMenuColor(View v) {
+        ColorPickerDialogBuilder
+                .with(this)
+                .setTitle("Choose color")
+                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                .density(12)
+                .setOnColorSelectedListener(new OnColorSelectedListener() {
+                    @Override
+                    public void onColorSelected(int selectedColor) {
+                    }
+                })
+                .setTitle(getString(R.string.menu_color))
+                .setPositiveButton("ok", new ColorPickerClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                        mMenu.setMenuColor(selectedColor);
+                        mBtnMenuColor.setImageDrawable(new ColorDrawable(selectedColor));
+                    }
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .build()
+                .show();
+    }
+
+    private void onClickBtnMenuShadowColor(View v) {
+        ColorPickerDialogBuilder
+                .with(this)
+                .setTitle("Choose color")
+                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                .density(12)
+                .setOnColorSelectedListener(new OnColorSelectedListener() {
+                    @Override
+                    public void onColorSelected(int selectedColor) {
+                    }
+                })
+                .setTitle(getString(R.string.menu_shadow_radius))
+                .setPositiveButton("ok", new ColorPickerClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                        mMenu.setMenuShadowColor(selectedColor);
+                        mBtnMenuShadowColor.setImageDrawable(new ColorDrawable(selectedColor));
+                    }
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .build()
+                .show();
+    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()) {
@@ -242,6 +327,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.seek_sweep_angle:
                 mMenu.setSweepAngle(720f * progress / seekBar.getMax() - 360);
+                break;
+            case R.id.seek_menu_shadow_radius:
+                mMenu.setMenuShadowRadius(progress);
                 break;
         }
     }
