@@ -122,21 +122,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         View actionView = inflater.inflate(R.layout.action_view, null, false);
         mMenu.setActionItem(new BaseItem(actionView, 80, 80));
 
-        TextView item1 = (TextView) inflater.inflate(R.layout.menu_item, null, false);
-        TextView item2 = (TextView) inflater.inflate(R.layout.menu_item, null, false);
-        TextView item3 = (TextView) inflater.inflate(R.layout.menu_item, null, false);
-        TextView item4 = (TextView) inflater.inflate(R.layout.menu_item, null, false);
-
-        item1.setText(String.valueOf(1));
-        item2.setText(String.valueOf(2));
-        item3.setText(String.valueOf(3));
-        item4.setText(String.valueOf(4));
-
         List<IMenu.IItem> items = new ArrayList<>();
-        items.add(new BaseItem(item1, 20, 20));
-        items.add(new BaseItem(item2, 40, 40));
-        items.add(new BaseItem(item3, 80, 80));
-        items.add(new BaseItem(item4, 100, 100));
+        for (int i = 0; i < 8; i++) {
+            TextView item = (TextView) inflater.inflate(R.layout.menu_item, null, false);
+            final int finalI = i;
+            item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getBaseContext(), "click item " + finalI, Toast.LENGTH_SHORT).show();
+                    mMenu.close(true);
+                }
+            });
+            item.setText(String.valueOf(i));
+            items.add(new BaseItem(item, 70, 70));
+        }
         mMenu.setItems(items);
 
         // anchor

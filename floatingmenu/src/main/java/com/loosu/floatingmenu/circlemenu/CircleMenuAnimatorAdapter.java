@@ -27,7 +27,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                 itemView.setScaleY(1);
             }
 
-        }else if (menu.getState() == IMenu.State.CLOSED){
+        } else if (menu.getState() == IMenu.State.CLOSED) {
             for (IMenu.IItem iItem : menu.getItems()) {
                 View itemView = iItem.getView();
                 itemView.setAlpha(0);
@@ -82,6 +82,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                 float distance = measure.getLength() / items.size();
                 float[] pos = new float[2];
 
+                long duration = items.size() > 3 ? 1500 / items.size() : 300;
                 for (int i = 0; i < items.size(); i++) {
                     // 计算 item 终点坐标
                     measure.getPosTan(distance * i, pos, null);
@@ -99,7 +100,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                     };
 
                     ObjectAnimator itemAnimator = ObjectAnimator.ofPropertyValuesHolder(itemView, holders);
-                    itemAnimator.setDuration(300);
+                    itemAnimator.setDuration(duration);
                     // 加入动画队列
                     animatorList.add(itemAnimator);
                 }
@@ -130,6 +131,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
             float anchorY = actionView.getY();
 
             List<IMenu.IItem> items = menu.getItems();
+            long duration = items.size() > 3 ? 1500 / items.size() : 300;
             if (items != null && items.size() > 0) {
 
                 for (int i = 0; i < items.size(); i++) {
@@ -145,7 +147,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                     };
 
                     ObjectAnimator itemAnimator = ObjectAnimator.ofPropertyValuesHolder(itemView, holders);
-                    itemAnimator.setDuration(300);
+                    itemAnimator.setDuration(duration);
                     // 加入动画队列
                     animatorList.add(itemAnimator);
                 }
