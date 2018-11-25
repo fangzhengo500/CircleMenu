@@ -2,16 +2,11 @@ package com.loosu.floatingmenu.circlemenu;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PathMeasure;
-import android.graphics.RectF;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Property;
@@ -42,6 +37,18 @@ public class CircleMenu extends ViewGroup implements IMenu {
         }
     };
 
+    public enum Anchor {
+        CENTER,
+        CENTER_LEFT,
+        CENTER_TOP,
+        CENTER_RIGHT,
+        CENTER_BOTTOM,
+        LEFT_TOP,
+        LEFT_BOTTOM,
+        RIGHT_TOP,
+        RIGHT_BOTTOM,
+    }
+
     private float mRadiusMax = 500;
     private float mRadiusMin = 0;
 
@@ -50,9 +57,10 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
     private float mRadius = mRadiusMin;
 
-    private IAnimatedAdapter<CircleMenu> mAnimatedAdapter = new CircleMenuAnimatorAdapter();
+    private State mState = State.CLOSED;
+    private Anchor mAnchor = Anchor.CENTER_BOTTOM;
 
-    private boolean isOpen = false;
+    private IAnimatedAdapter<CircleMenu> mAnimatedAdapter = new CircleMenuAnimatorAdapter();
 
     private OnStateChangeListener mStateChangeListener = null;
 
@@ -60,7 +68,6 @@ public class CircleMenu extends ViewGroup implements IMenu {
     private ActionItem mItemAction = null;
 
     private List<IMenu.IItem> mItems = new ArrayList<>();
-
 
     public CircleMenu(Context context) {
         this(context, null);
@@ -74,7 +81,6 @@ public class CircleMenu extends ViewGroup implements IMenu {
         super(context, attrs, defStyleAttr);
         this.setWillNotDraw(false);
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
 
         TextView item1 = new TextView(context);
         TextView item2 = new TextView(context);
@@ -104,41 +110,86 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-
+        Log.d(TAG, "onSizeChanged: w = " + w + ", h = " + h + ", oldw = " + oldw + ", oldh = " + oldh);
         mRadiusMax = Math.min(w, h) / 4;
         mRadiusMin = mRadiusMax / 4;
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int centerX = (r - l) / 2;
-        int centerY = (b - t) / 2;
-        mItemAction.getView().layout(centerX - 50, centerY - 50, centerX + 50, centerY + 50);
+        Log.d(TAG, "onLayout: changed = " + changed + ", l = " + l + ", t = " + t + ", r = " + r + ", b = " + b);
+
+        int anchorX = 0;
+        int anchorY = 0;
+
+        switch (mAnchor) {
+            case CENTER:
+                anchorX = (r - l) / 2;
+                anchorY = (b - t) / 2;
+                break;
+            case CENTER_LEFT:
+                anchorX = l;
+                anchorY = (b - t) / 2;
+                break;
+            case CENTER_TOP:
+                anchorX = (r - l) / 2;
+                anchorY = t;
+                break;
+            case CENTER_RIGHT:
+                anchorX = r;
+                anchorY = (b - t) / 2;
+                break;
+            case CENTER_BOTTOM:
+                anchorX = (r - l) / 2;
+                anchorY = b;
+                break;
+            case LEFT_TOP:
+                anchorX = l;
+                anchorY = t;
+                break;
+            case LEFT_BOTTOM:
+                anchorX = l;
+                anchorY = b;
+                break;
+            case RIGHT_TOP:
+                anchorX = r;
+                anchorY = t;
+                break;
+            case RIGHT_BOTTOM:
+                anchorX = r;
+                anchorY = b;
+                break;
+        }
+
+        mItemAction.getView().layout(anchorX - 50, anchorY - 50, anchorX + 50, anchorY + 50);
 
         for (IItem item : mItems) {
-            item.getView().layout(centerX - 50, centerY - 50, centerX + 50, centerY + 50);
+            item.getView().layout(anchorX - 50, anchorY - 50, anchorX + 50, anchorY + 50);
         }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float left = getWidth() / 2 - mRadius;
-        float top = getHeight() / 2 - mRadius;
-        float right = getWidth() / 2 + mRadius;
-        float bottom = getHeight() / 2 + mRadius;
-        RectF panelRect = new RectF(left, top, right, bottom);
+        View actionView = mItemAction.getView();
+        int anchorX = (actionView.getRight() + actionView.getLeft()) / 2;
+        int anchorY = (actionView.getBottom() + actionView.getTop()) / 2;
+//        float left = anchorX - mRadius;
+//        float top = anchorY - mRadius;
+//        float right = anchorX + mRadius;
+//        float bottom = anchorY + mRadius;
+//        RectF panelRect = new RectF(left, top, right, bottom);
 
         mPaint.setColor(Color.WHITE);
         mPaint.setShadowLayer(10f, 0, 0, 0x33333333);
-        canvas.drawArc(panelRect, 0, 360, true, mPaint);
+        //canvas.d(panelRect, 0, 360, true, mPaint);
+
+        Log.d(TAG, "onDraw: anchorX = " + anchorX + ", anchorY = " + anchorY + ", mRadius = " + mRadius);
+        canvas.drawCircle(anchorX, anchorY, mRadius, mPaint);
     }
 
     @Override
     public void open(boolean animated) {
-        isOpen = true;
-
         changeState(State.START_OPEN);
 
         Animator animator = mAnimatedAdapter.obtainOpenAnimator(this);
@@ -150,9 +201,6 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
     @Override
     public void close(boolean animated) {
-
-        isOpen = false;
-
         changeState(State.START_CLOSE);
         Animator animator = mAnimatedAdapter.obtainCloseAnimator(this);
         if (animator != null) {
@@ -162,9 +210,23 @@ public class CircleMenu extends ViewGroup implements IMenu {
     }
 
     private void changeState(State state) {
+        mState = state;
         if (mStateChangeListener != null) {
             mStateChangeListener.onMenuStateChange(this, state);
         }
+    }
+
+    @NonNull
+    public Anchor getAnchor() {
+        return mAnchor;
+    }
+
+    public void setAnchor(Anchor anchor) {
+        if (anchor == null) {
+            return;
+        }
+        mAnchor = anchor;
+        requestLayout();
     }
 
     public ActionItem getItemAction() {
@@ -226,16 +288,16 @@ public class CircleMenu extends ViewGroup implements IMenu {
         requestLayout();
     }
 
+    public State getState() {
+        return mState;
+    }
+
     public OnStateChangeListener getStateChangeListener() {
         return mStateChangeListener;
     }
 
     public void setStateChangeListener(OnStateChangeListener stateChangeListener) {
         mStateChangeListener = stateChangeListener;
-    }
-
-    public boolean isOpen() {
-        return isOpen;
     }
 
     private final AnimatorListenerAdapter mMenuOpenListener = new AnimatorListenerAdapter() {

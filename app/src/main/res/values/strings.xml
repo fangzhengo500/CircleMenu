@@ -3,7 +3,19 @@
     <string name="min_radius">Min Radius</string>
     <string name="max_radius">Max Radius</string>
     <string name="radius">Radius</string>
+
     <string name="angle">Angle</string>
     <string name="start_angle">Start Angle</string>
     <string name="sweep_angle">Sweep Angle</string>
+
+    <string name="anchor">Anchor</string>
+    <string name="anchor_left_top">Left Top</string>
+    <string name="anchor_left_bottom">Left Bottom</string>
+    <string name="anchor_right_top">Right Top</string>
+    <string name="anchor_right_bottom">Right Bottom</string>
+    <string name="anchor_center">Center</string>
+    <string name="anchor_center_left">Center Left</string>
+    <string name="anchor_center_top">Center Top</string>
+    <string name="anchor_center_right">Center Right</string>
+    <string name="anchor_center_bottom">Center Bottom</string>
 </resources>
