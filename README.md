@@ -5,7 +5,7 @@
 <img src="assets/about.gif"  width="216" height="384">
 
 ### Anchor
-<div align="center">
+<div>
     <img src="assets/anchor.gif"  width="216" height="384">
     <img src="assets/anchor_offset.gif"  width="216" height="384">
 </div>
