@@ -19,7 +19,6 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
-import com.loosu.floatingmenu.circlemenu.BaseItem;
 import com.loosu.floatingmenu.circlemenu.CircleMenu;
 import com.loosu.floatingmenu.IMenu;
 
@@ -43,17 +42,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RadioButton mRbAnchorLeftBottom;
     private RadioButton mRbAnchorRightTop;
     private RadioButton mRbAnchorRightBottom;
+
     private SeekBar mSeekAnchorOffsetX;
     private SeekBar mSeekAnchorOffsetY;
+    private TextView mTvAnchorOffsetValueX;
+    private TextView mTvAnchorOffsetValueY;
 
     // radius
     private SeekBar mSeekMinRadius;
     private SeekBar mSeekMaxRadius;
     private SeekBar mSeekItemRadius;
+    private TextView mTvMenuMinRadiusValue;
+    private TextView mTvMenuMaxRadiusValue;
+    private TextView mTvItemRadiusValue;
 
     // angle
     private SeekBar mSeekStartAngle;
     private SeekBar mSeekSweepAngle;
+    private TextView mTvStartAngleValue;
+    private TextView mTvSweepAngleValue;
 
     // menu color
     private ImageView mBtnMenuColor;
@@ -61,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SeekBar mSeekMenuShadowRadius;
 
     private ViewPager mViewPager;
+    private TextView mTvMenuShadowRadiusValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,20 +106,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mSeekAnchorOffsetX = findViewById(R.id.seek_anchor_offset_x);
         mSeekAnchorOffsetY = findViewById(R.id.seek_anchor_offset_y);
+        mTvAnchorOffsetValueX = findViewById(R.id.tv_anchor_offset_x_value);
+        mTvAnchorOffsetValueY = findViewById(R.id.tv_anchor_offset_y_value);
 
         // radius
         mSeekMinRadius = findViewById(R.id.seek_min_radius);
         mSeekMaxRadius = findViewById(R.id.seek_max_radius);
         mSeekItemRadius = findViewById(R.id.seek_item_radius);
+        mTvMenuMinRadiusValue = findViewById(R.id.tv_min_menu_radius_value);
+        mTvMenuMaxRadiusValue = findViewById(R.id.tv_max_menu_radius_value);
+        mTvItemRadiusValue = findViewById(R.id.tv_item_radius_value);
 
         // angle
         mSeekStartAngle = findViewById(R.id.seek_start_angle);
         mSeekSweepAngle = findViewById(R.id.seek_sweep_angle);
+        mTvStartAngleValue = findViewById(R.id.tv_start_angle_value);
+        mTvSweepAngleValue = findViewById(R.id.tv_sweep_angle_value);
 
         // menu color
         mBtnMenuColor = findViewById(R.id.btn_menu_color);
         mBtnMenuShadowColor = findViewById(R.id.btn_menu_shadow_color);
         mSeekMenuShadowRadius = findViewById(R.id.seek_menu_shadow_radius);
+        mTvMenuShadowRadiusValue = findViewById(R.id.tv_menu_shadow_radius_value);
 
         mViewPager = findViewById(R.id.view_pager);
     }
@@ -120,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // menu
         LayoutInflater inflater = LayoutInflater.from(this);
         View actionView = inflater.inflate(R.layout.action_view, null, false);
-        mMenu.setActionItem(new BaseItem(actionView, 80, 80));
+        mMenu.setActionItem(new CircleMenu.Item(actionView, 80, 80));
 
         List<IMenu.IItem> items = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
@@ -134,25 +150,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
             item.setText(String.valueOf(i));
-            items.add(new BaseItem(item, 70, 70));
+            items.add(new CircleMenu.Item(item, 70, 70));
         }
         mMenu.setItems(items);
 
-        // anchor
-        mSeekAnchorOffsetX.setProgress(mMenu.getAnchorOffsetX() + mSeekAnchorOffsetX.getMax() / 2);
-        mSeekAnchorOffsetY.setProgress(mMenu.getAnchorOffsetY() + mSeekAnchorOffsetY.getMax() / 2);
+        mMenu.post(new Runnable() {
+            @Override
+            public void run() {
+                // anchor
+                mSeekAnchorOffsetX.setProgress(mMenu.getAnchorOffsetX() + mSeekAnchorOffsetX.getMax() / 2);
+                mSeekAnchorOffsetY.setProgress(mMenu.getAnchorOffsetY() + mSeekAnchorOffsetY.getMax() / 2);
+                mTvAnchorOffsetValueX.setText(String.valueOf(mMenu.getAnchorOffsetX()));
+                mTvAnchorOffsetValueY.setText(String.valueOf(mMenu.getAnchorOffsetY()));
 
-        // radius
-        mSeekMinRadius.setProgress((int) mMenu.getMenuRadiusMin());
-        mSeekMaxRadius.setProgress((int) mMenu.getMenuRadiusMax());
+                // radius
+                mSeekMinRadius.setProgress((int) mMenu.getMenuRadiusMin());
+                mSeekMaxRadius.setProgress((int) mMenu.getMenuRadiusMax());
+                mSeekItemRadius.setProgress((int) mMenu.getItemRadius());
+                mTvMenuMinRadiusValue.setText(String.valueOf(mMenu.getMenuRadiusMin()));
+                mTvMenuMaxRadiusValue.setText(String.valueOf(mMenu.getMenuRadiusMax()));
+                mTvItemRadiusValue.setText(String.valueOf(mMenu.getItemRadius()));
 
-        // angle
-        mSeekStartAngle.setProgress((int) mMenu.getStartAngle());
-        mSeekSweepAngle.setProgress((int) (mMenu.getSweepAngle() + 360f) * mSeekSweepAngle.getMax() / 720);
+                // angle
+                mSeekStartAngle.setProgress((int) mMenu.getStartAngle());
+                mSeekSweepAngle.setProgress((int) (mMenu.getSweepAngle() + 360f) * mSeekSweepAngle.getMax() / 720);
+                mTvStartAngleValue.setText(String.valueOf(mMenu.getStartAngle()));
+                mTvSweepAngleValue.setText(String.valueOf(mMenu.getSweepAngle()));
 
-        // menu color
-        mBtnMenuColor.setImageDrawable(new ColorDrawable(mMenu.getMenuColor()));
-        mBtnMenuShadowColor.setImageDrawable(new ColorDrawable(mMenu.getMenuShadowColor()));
+                // menu color
+                mBtnMenuColor.setImageDrawable(new ColorDrawable(mMenu.getMenuColor()));
+                mBtnMenuShadowColor.setImageDrawable(new ColorDrawable(mMenu.getMenuShadowColor()));
+                mTvMenuShadowRadiusValue.setText(String.valueOf(mMenu.getMenuShadowRadius()));
+            }
+        });
 
         mViewPager.setAdapter(new MyPageAdapter(getSupportFragmentManager()));
     }
@@ -308,27 +338,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (seekBar.getId()) {
             case R.id.seek_anchor_offset_x:
                 mMenu.setAnchorOffsetX(progress - seekBar.getMax() / 2);
+                mTvAnchorOffsetValueX.setText(String.valueOf(mMenu.getAnchorOffsetX()));
                 break;
             case R.id.seek_anchor_offset_y:
                 mMenu.setAnchorOffsetY(progress - seekBar.getMax() / 2);
+                mTvAnchorOffsetValueY.setText(String.valueOf(mMenu.getAnchorOffsetY()));
                 break;
             case R.id.seek_min_radius:
                 mMenu.setMenuRadiusMin(progress);
+                mTvMenuMinRadiusValue.setText(String.valueOf(mMenu.getMenuRadiusMin()));
                 break;
             case R.id.seek_max_radius:
                 mMenu.setMenuRadiusMax(progress);
+                mTvMenuMaxRadiusValue.setText(String.valueOf(mMenu.getMenuRadiusMax()));
                 break;
             case R.id.seek_item_radius:
                 mMenu.setItemRadius(progress);
+                mTvItemRadiusValue.setText(String.valueOf(mMenu.getItemRadius()));
                 break;
             case R.id.seek_start_angle:
                 mMenu.setStartAngle(360f * progress / seekBar.getMax());
+                mTvStartAngleValue.setText(String.valueOf(mMenu.getStartAngle()));
                 break;
             case R.id.seek_sweep_angle:
                 mMenu.setSweepAngle(720f * progress / seekBar.getMax() - 360);
+                mTvSweepAngleValue.setText(String.valueOf(mMenu.getSweepAngle()));
                 break;
             case R.id.seek_menu_shadow_radius:
                 mMenu.setMenuShadowRadius(progress);
+                mTvMenuShadowRadiusValue.setText(String.valueOf(mMenu.getMenuShadowRadius()));
                 break;
         }
     }

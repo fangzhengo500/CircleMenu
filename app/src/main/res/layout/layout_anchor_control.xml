@@ -35,6 +35,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
+                    android:singleLine="true"
                     android:text="@string/anchor_left_top" />
 
                 <RadioButton
@@ -42,6 +43,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
+                    android:singleLine="true"
                     android:text="@string/anchor_center_top" />
 
                 <RadioButton
@@ -49,6 +51,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
+                    android:singleLine="true"
                     android:text="@string/anchor_right_top" />
 
                 <RadioButton
@@ -56,6 +59,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
+                    android:singleLine="true"
                     android:text="@string/anchor_center_left" />
 
                 <RadioButton
@@ -63,6 +67,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
+                    android:singleLine="true"
                     android:text="@string/anchor_center" />
 
                 <RadioButton
@@ -70,6 +75,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
+                    android:singleLine="true"
                     android:text="@string/anchor_center_right" />
 
                 <RadioButton
@@ -77,6 +83,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
+                    android:singleLine="true"
                     android:text="@string/anchor_left_bottom" />
 
                 <RadioButton
@@ -84,6 +91,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
+                    android:singleLine="true"
                     android:text="@string/anchor_center_bottom" />
 
                 <RadioButton
@@ -91,6 +99,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
+                    android:singleLine="true"
                     android:text="@string/anchor_right_bottom" />
             </GridLayout>
         </android.support.v7.widget.CardView>
@@ -113,9 +122,17 @@
 
                 <SeekBar
                     android:id="@+id/seek_anchor_offset_x"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:max="500"/>
+                    android:layout_weight="9"
+                    android:max="500" />
+
+                <TextView
+                    android:id="@+id/tv_anchor_offset_x_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
@@ -137,9 +154,17 @@
 
                 <SeekBar
                     android:id="@+id/seek_anchor_offset_y"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:max="500"/>
+                    android:layout_weight="9"
+                    android:max="500" />
+
+                <TextView
+                    android:id="@+id/tv_anchor_offset_y_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
     </LinearLayout>

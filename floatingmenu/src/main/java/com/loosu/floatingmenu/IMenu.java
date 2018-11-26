@@ -44,7 +44,7 @@ public interface IMenu {
      * menu item class
      */
     public interface IItem {
-        public int getWidht();
+        public int getWidth();
 
         public int getHeight();
 

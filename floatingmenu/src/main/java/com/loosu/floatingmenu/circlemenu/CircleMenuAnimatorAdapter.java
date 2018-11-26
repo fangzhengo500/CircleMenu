@@ -66,7 +66,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
         // item 动画
         List<Animator> animatorList = new ArrayList<>();
         if (menu.getActionItem() != null && menu.getActionItem().getView() != null && menu.getItems() != null) {
-            BaseItem actionItem = menu.getActionItem();
+            CircleMenu.Item actionItem = menu.getActionItem();
             View actionView = actionItem.getView();
 
             float anchorX = actionView.getX() + actionView.getWidth() / 2;
@@ -95,7 +95,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                     View itemView = item.getView();
 
                     PropertyValuesHolder[] holders = {
-                            PropertyValuesHolder.ofFloat(View.X, itemView.getX(), pos[0] - item.getWidht() / 2),
+                            PropertyValuesHolder.ofFloat(View.X, itemView.getX(), pos[0] - item.getWidth() / 2),
                             PropertyValuesHolder.ofFloat(View.Y, itemView.getY(), pos[1] - item.getHeight() / 2),
                             PropertyValuesHolder.ofFloat(View.SCALE_X, itemView.getScaleX(), 1),
                             PropertyValuesHolder.ofFloat(View.SCALE_Y, itemView.getScaleY(), 1),

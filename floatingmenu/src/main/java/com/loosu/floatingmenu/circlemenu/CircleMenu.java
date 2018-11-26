@@ -50,7 +50,7 @@ public class CircleMenu extends ViewGroup implements IMenu {
 
     // menu
     private State mState = State.CLOSED;
-    private BaseItem mActionItem = null;
+    private Item mActionItem = null;
     private List<IMenu.IItem> mItems = new ArrayList<>();
 
     // anchor
@@ -173,13 +173,13 @@ public class CircleMenu extends ViewGroup implements IMenu {
         if (mActionItem != null) {
             View actionView = mActionItem.getView();
             LayoutParams params = actionView.getLayoutParams();
-            int width = mActionItem.getWidht();
+            int width = mActionItem.getWidth();
             int height = mActionItem.getHeight();
             actionView.layout(anchorX - width / 2, anchorY - height / 2, anchorX + width / 2, anchorY + height / 2);
         }
 
         for (IItem item : mItems) {
-            int horizontalSize = item.getWidht() / 2;
+            int horizontalSize = item.getWidth() / 2;
             int verticalSize = item.getHeight() / 2;
             View itemView = item.getView();
             itemView.layout(anchorX - horizontalSize, anchorY - verticalSize, anchorX + horizontalSize, anchorY + verticalSize);
@@ -284,11 +284,11 @@ public class CircleMenu extends ViewGroup implements IMenu {
         requestLayout();
     }
 
-    public BaseItem getActionItem() {
+    public Item getActionItem() {
         return mActionItem;
     }
 
-    public void setActionItem(BaseItem actionItem) {
+    public void setActionItem(Item actionItem) {
         if (mActionItem != null) {
             removeView(mActionItem.getView());
         }
@@ -452,4 +452,31 @@ public class CircleMenu extends ViewGroup implements IMenu {
             }
         }
     };
+
+    public static class Item implements IItem {
+        private final View mView;
+        private int mWidth;
+        private int mHeight;
+
+        public Item(View view, int width, int height) {
+            mView = view;
+            mWidth = width;
+            mHeight = height;
+        }
+
+        @Override
+        public int getWidth() {
+            return mWidth;
+        }
+
+        @Override
+        public int getHeight() {
+            return mHeight;
+        }
+
+        @Override
+        public View getView() {
+            return mView;
+        }
+    }
 }

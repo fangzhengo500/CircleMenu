@@ -38,9 +38,14 @@
 
                 <SeekBar
                     android:id="@+id/seek_min_radius"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="8"
                     android:max="500" />
+
+                <TextView
+                    android:id="@+id/tv_min_menu_radius_value"
+                    style="@style/SeekBarValueTextStyle" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
@@ -62,9 +67,14 @@
 
                 <SeekBar
                     android:id="@+id/seek_max_radius"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="8"
                     android:max="500" />
+
+                <TextView
+                    android:id="@+id/tv_max_menu_radius_value"
+                    style="@style/SeekBarValueTextStyle" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
@@ -86,9 +96,14 @@
 
                 <SeekBar
                     android:id="@+id/seek_item_radius"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="8"
                     android:max="500" />
+
+                <TextView
+                    android:id="@+id/tv_item_radius_value"
+                    style="@style/SeekBarValueTextStyle" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
     </LinearLayout>
