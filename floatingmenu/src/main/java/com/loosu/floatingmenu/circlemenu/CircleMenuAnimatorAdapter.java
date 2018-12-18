@@ -74,7 +74,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
             float anchorY = actionView.getY() + actionView.getHeight() / 2;
             float itemRadius = menu.getItemRadius();
 
-            List<IMenu.IItem> items = menu.getItems();
+            List<? extends IMenu.IItem> items = menu.getItems();
             if (items != null && items.size() > 0) {
                 RectF rectF = new RectF(
                         anchorX - itemRadius,
@@ -144,7 +144,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
             float anchorX = actionView.getX();
             float anchorY = actionView.getY();
 
-            List<IMenu.IItem> items = menu.getItems();
+            List<? extends IMenu.IItem> items = menu.getItems();
             long duration = items.size() > 3 ? 1500 / items.size() : CLOSE_ANIMATION_DURATION;
             if (items != null && items.size() > 0) {
 

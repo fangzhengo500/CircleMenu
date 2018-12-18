@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -51,7 +52,7 @@ public class CircleMenu extends ViewGroup implements IMenu {
     // menu
     private State mState = State.CLOSED;
     private Item mActionItem = null;
-    private List<IMenu.IItem> mItems = new ArrayList<>();
+    private List<? extends IItem> mItems = new ArrayList<>();
 
     // anchor
     private Anchor mAnchor = Anchor.CENTER;
@@ -127,48 +128,50 @@ public class CircleMenu extends ViewGroup implements IMenu {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         Log.d(TAG, "onLayout: changed = " + changed + ", l = " + l + ", t = " + t + ", r = " + r + ", b = " + b);
-
-        int anchorX = mAnchorOffsetX;
-        int anchorY = mAnchorOffsetY;
-
-        switch (mAnchor) {
-            case CENTER:
-                anchorX += (r - l) / 2;
-                anchorY += (b - t) / 2;
-                break;
-            case CENTER_LEFT:
-                anchorX += l;
-                anchorY += (b - t) / 2;
-                break;
-            case CENTER_TOP:
-                anchorX += (r - l) / 2;
-                anchorY += t;
-                break;
-            case CENTER_RIGHT:
-                anchorX += r;
-                anchorY += (b - t) / 2;
-                break;
-            case CENTER_BOTTOM:
-                anchorX += (r - l) / 2;
-                anchorY += b;
-                break;
-            case LEFT_TOP:
-                anchorX += l;
-                anchorY += t;
-                break;
-            case LEFT_BOTTOM:
-                anchorX += l;
-                anchorY += b;
-                break;
-            case RIGHT_TOP:
-                anchorX += r;
-                anchorY += t;
-                break;
-            case RIGHT_BOTTOM:
-                anchorX += r;
-                anchorY += b;
-                break;
-        }
+        Point point = getAnchorPoint();
+        int anchorX = point.x;
+        int anchorY = point.y;
+//        int anchorX = mAnchorOffsetX;
+//        int anchorY = mAnchorOffsetY;
+//
+//        switch (mAnchor) {
+//            case CENTER:
+//                anchorX += (r - l) / 2;
+//                anchorY += (b - t) / 2;
+//                break;
+//            case CENTER_LEFT:
+//                anchorX += l;
+//                anchorY += (b - t) / 2;
+//                break;
+//            case CENTER_TOP:
+//                anchorX += (r - l) / 2;
+//                anchorY += t;
+//                break;
+//            case CENTER_RIGHT:
+//                anchorX += r;
+//                anchorY += (b - t) / 2;
+//                break;
+//            case CENTER_BOTTOM:
+//                anchorX += (r - l) / 2;
+//                anchorY += b;
+//                break;
+//            case LEFT_TOP:
+//                anchorX += l;
+//                anchorY += t;
+//                break;
+//            case LEFT_BOTTOM:
+//                anchorX += l;
+//                anchorY += b;
+//                break;
+//            case RIGHT_TOP:
+//                anchorX += r;
+//                anchorY += t;
+//                break;
+//            case RIGHT_BOTTOM:
+//                anchorX += r;
+//                anchorY += b;
+//                break;
+//        }
 
         if (mActionItem != null) {
             View actionView = mActionItem.getView();
@@ -251,6 +254,57 @@ public class CircleMenu extends ViewGroup implements IMenu {
     }
 
     @NonNull
+    public Point getAnchorPoint() {
+        int l = getLeft();
+        int t = getTop();
+        int r = getRight();
+        int b = getBottom();
+
+        int anchorX = mAnchorOffsetX;
+        int anchorY = mAnchorOffsetY;
+
+        switch (mAnchor) {
+            case CENTER:
+                anchorX += (r - l) / 2;
+                anchorY += (b - t) / 2;
+                break;
+            case CENTER_LEFT:
+                anchorX += l;
+                anchorY += (b - t) / 2;
+                break;
+            case CENTER_TOP:
+                anchorX += (r - l) / 2;
+                anchorY += t;
+                break;
+            case CENTER_RIGHT:
+                anchorX += r;
+                anchorY += (b - t) / 2;
+                break;
+            case CENTER_BOTTOM:
+                anchorX += (r - l) / 2;
+                anchorY += b;
+                break;
+            case LEFT_TOP:
+                anchorX += l;
+                anchorY += t;
+                break;
+            case LEFT_BOTTOM:
+                anchorX += l;
+                anchorY += b;
+                break;
+            case RIGHT_TOP:
+                anchorX += r;
+                anchorY += t;
+                break;
+            case RIGHT_BOTTOM:
+                anchorX += r;
+                anchorY += b;
+                break;
+        }
+        return new Point(anchorX, anchorY);
+    }
+
+    @NonNull
     public Anchor getAnchor() {
         return mAnchor;
     }
@@ -258,6 +312,7 @@ public class CircleMenu extends ViewGroup implements IMenu {
     public void setAnchor(Anchor anchor) {
         if (anchor == null) {
             return;
+
         }
         if (mAnimator != null) {
             mAnimator.end();
@@ -301,11 +356,11 @@ public class CircleMenu extends ViewGroup implements IMenu {
         }
     }
 
-    public List<IItem> getItems() {
+    public List<? extends IItem> getItems() {
         return mItems;
     }
 
-    public void setItems(List<IItem> items) {
+    public void setItems(List<? extends IItem> items) {
         if (items == null) {
             mItems.clear();
         } else {
@@ -486,5 +541,8 @@ public class CircleMenu extends ViewGroup implements IMenu {
         public View getView() {
             return mView;
         }
+    }
+
+    public static class Builder {
     }
 }

@@ -25,4 +25,6 @@
     <string name="menu_color">Menu Color</string>
     <string name="shadow_color">Shadow Color</string>
     <string name="menu_shadow_radius">Menu Shadow Radius</string>
+    <string name="btn_circle_menu">Circle Menu</string>
+    <string name="btn_circle_menu_helper">Circle Menu Helper</string>
 </resources>
