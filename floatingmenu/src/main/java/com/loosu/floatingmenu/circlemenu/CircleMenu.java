@@ -95,7 +95,7 @@ public class CircleMenu extends ViewGroup implements IMenu {
     public CircleMenu(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.setWillNotDraw(false);
-        this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        //this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         mPaint.setColor(DEFAULT_MENU_COLOR);
         mPaint.setShadowLayer(mMenuShadowRadius, 0, 0, mMenuShadowColor);
     }
@@ -395,6 +395,14 @@ public class CircleMenu extends ViewGroup implements IMenu {
         mMenuShadowRadius = menuShadowRadius;
         mPaint.setShadowLayer(menuShadowRadius, 0, 0, mMenuShadowColor);
         postInvalidate();
+    }
+
+    public IAnimatedAdapter<CircleMenu> getAnimatedAdapter() {
+        return mAnimatedAdapter;
+    }
+
+    public void setAnimatedAdapter(IAnimatedAdapter<CircleMenu> animatedAdapter) {
+        mAnimatedAdapter = animatedAdapter;
     }
 
     public State getState() {

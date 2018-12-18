@@ -1,5 +1,6 @@
 package com.loosu.sample;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
@@ -21,6 +22,7 @@ import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.loosu.floatingmenu.circlemenu.CircleMenu;
 import com.loosu.floatingmenu.IMenu;
+import com.loosu.sample.utils.ViewUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,11 +135,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView(Bundle savedInstanceState) {
+        Context context = this;
         // menu
         LayoutInflater inflater = LayoutInflater.from(this);
         View actionView = inflater.inflate(R.layout.action_view, null, false);
-        mMenu.setActionItem(new CircleMenu.Item(actionView, 80, 80));
 
+        int actionSize = ViewUtil.dp2px(context, 50);
+        mMenu.setActionItem(new CircleMenu.Item(actionView, actionSize, actionSize));
+
+        int itemSize = ViewUtil.dp2px(context, 40);
         List<IMenu.IItem> items = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             TextView item = (TextView) inflater.inflate(R.layout.menu_item, null, false);
@@ -150,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
             item.setText(String.valueOf(i));
-            items.add(new CircleMenu.Item(item, 70, 70));
+            items.add(new CircleMenu.Item(item, itemSize, itemSize));
         }
         mMenu.setItems(items);
 
@@ -183,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mTvMenuShadowRadiusValue.setText(String.valueOf(mMenu.getMenuShadowRadius()));
             }
         });
-
         mViewPager.setAdapter(new MyPageAdapter(getSupportFragmentManager()));
     }
 

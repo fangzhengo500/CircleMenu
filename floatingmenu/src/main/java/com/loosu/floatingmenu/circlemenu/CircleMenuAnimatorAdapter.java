@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleMenu> {
-    private final long ANIMATION_DURATION = 200;
+    private final long OPEN_ANIMATION_DURATION = 150;
+    private final long CLOSE_ANIMATION_DURATION = 150;
 
     @Override
     public Animator onLayout(@NonNull CircleMenu menu) {
@@ -56,12 +57,12 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                     PropertyValuesHolder.ofFloat(View.SCALE_Y, actionView.getScaleY(), 0, 1),
             };
             actionViewAnimator = ObjectAnimator.ofPropertyValuesHolder(actionView, holder1);
-            actionViewAnimator.setDuration(ANIMATION_DURATION);
+            actionViewAnimator.setDuration(OPEN_ANIMATION_DURATION);
         }
 
         // menu 动画
         ObjectAnimator menuAnimator = ObjectAnimator.ofPropertyValuesHolder(menu, PropertyValuesHolder.ofFloat(CircleMenu.MENU_RADIUS, menu.getMenuRadius(), menu.getMenuRadiusMax()));
-        menuAnimator.setDuration(ANIMATION_DURATION);
+        menuAnimator.setDuration(OPEN_ANIMATION_DURATION);
 
         // item 动画
         List<Animator> animatorList = new ArrayList<>();
@@ -86,7 +87,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                 float distance = measure.getLength() / items.size();
                 float[] pos = new float[2];
 
-                long duration = items.size() > 3 ? 1500 / items.size() : ANIMATION_DURATION;
+                long duration = items.size() > 3 ? 1500 / items.size() : OPEN_ANIMATION_DURATION;
                 for (int i = 0; i < items.size(); i++) {
                     // 计算 item 终点坐标
                     measure.getPosTan(distance * i, pos, null);
@@ -144,7 +145,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
             float anchorY = actionView.getY();
 
             List<IMenu.IItem> items = menu.getItems();
-            long duration = items.size() > 3 ? 1500 / items.size() : ANIMATION_DURATION;
+            long duration = items.size() > 3 ? 1500 / items.size() : CLOSE_ANIMATION_DURATION;
             if (items != null && items.size() > 0) {
 
                 for (int i = 0; i < items.size(); i++) {
@@ -177,7 +178,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
 
         // menu 动画
         ObjectAnimator menuAnimator = ObjectAnimator.ofPropertyValuesHolder(menu, PropertyValuesHolder.ofFloat(CircleMenu.MENU_RADIUS, menu.getMenuRadius(), menu.getMenuRadiusMin()));
-        menuAnimator.setDuration(ANIMATION_DURATION);
+        menuAnimator.setDuration(CLOSE_ANIMATION_DURATION);
 
         // action item 动画
         ObjectAnimator actionViewAnimator = null;
@@ -190,7 +191,7 @@ public class CircleMenuAnimatorAdapter implements IMenu.IAnimatedAdapter<CircleM
                     PropertyValuesHolder.ofFloat(View.SCALE_Y, actionView.getScaleY(), 0, 1),
             };
             actionViewAnimator = ObjectAnimator.ofPropertyValuesHolder(actionView, holder1);
-            actionViewAnimator.setDuration(ANIMATION_DURATION);
+            actionViewAnimator.setDuration(CLOSE_ANIMATION_DURATION);
         }
 
         AnimatorSet animatorSet = new AnimatorSet();
